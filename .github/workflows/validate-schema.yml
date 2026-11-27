@@ -1,0 +1,32 @@
+name: Validate database schema
+
+on:
+  pull_request:
+    paths:
+      - "migrations/**/*.sql"
+      - ".github/workflows/validate-schema.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sqlite-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Validate migration syntax and constraints
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_FILE="$(mktemp)"
+          trap 'rm -f "$DB_FILE"' EXIT
+          sqlite3 "$DB_FILE" < migrations/0001_initial.sql
+          sqlite3 "$DB_FILE" "PRAGMA foreign_key_check;" | tee /tmp/foreign-key-check.txt
+          test ! -s /tmp/foreign-key-check.txt
+          for table in users projects assets wallet_ledger products orders audit_log; do
+            sqlite3 "$DB_FILE" "SELECT name FROM sqlite_master WHERE type='table' AND name='$table';" | grep -qx "$table"
+          done
+          sqlite3 "$DB_FILE" "SELECT name FROM sqlite_master WHERE type='view' AND name='wallet_balances';" | grep -qx "wallet_balances"
+          echo "Schema syntax and expected objects validated."
