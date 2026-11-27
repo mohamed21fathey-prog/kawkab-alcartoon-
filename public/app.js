@@ -32,18 +32,62 @@ const ideaForm = document.querySelector("#idea-form");
 const result = document.querySelector("#idea-result");
 const projectList = document.querySelector("#saved-project-list");
 const projectCount = document.querySelector("#project-count");
+const projectImport = document.querySelector("#project-import");
+const projectFeedback = document.querySelector("#project-feedback");
+const projectName = document.querySelector("#project-name");
+const projectType = document.querySelector("#project-type");
+const projectIdea = document.querySelector("#project-idea");
+const submitButton = ideaForm && ideaForm.querySelector('button[type="submit"]');
 const STORAGE_KEY = "kawkab-cartoon-projects-v1";
+const MAX_PROJECTS = 30;
+const MAX_IMPORT_BYTES = 1024 * 1024;
 let projects = [];
+let editingProjectId = null;
+
+function showFeedback(message, isError) {
+  if (!projectFeedback) return;
+  projectFeedback.textContent = message;
+  projectFeedback.classList.toggle("is-error", Boolean(isError));
+}
+
+function isValidProject(item) {
+  return Boolean(
+    item && typeof item === "object" &&
+    typeof item.name === "string" && item.name.trim().length > 0 &&
+    item.name.length <= 80 &&
+    typeof item.type === "string" && item.type.length <= 60 &&
+    typeof item.idea === "string" && item.idea.trim().length > 0 &&
+    item.idea.length <= 600
+  );
+}
+
+function normalizeProject(item) {
+  return {
+    id: typeof item.id === "string" && item.id.length <= 100
+      ? item.id
+      : makeId(),
+    name: item.name.trim(),
+    type: item.type,
+    idea: item.idea.trim(),
+    updatedAt: item.updatedAt && !Number.isNaN(Date.parse(item.updatedAt))
+      ? new Date(item.updatedAt).toISOString()
+      : new Date().toISOString(),
+    status: "مسودة"
+  };
+}
+
+function makeId() {
+  return (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : String(Date.now()) + "-" + Math.random().toString(16).slice(2);
+}
 
 function readProjects() {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(stored) ? stored.filter((item) =>
-      item && typeof item.id === "string" &&
-      typeof item.name === "string" &&
-      typeof item.type === "string" &&
-      typeof item.idea === "string"
-    ) : [];
+    return Array.isArray(stored)
+      ? stored.filter(isValidProject).map(normalizeProject).slice(0, MAX_PROJECTS)
+      : [];
   } catch (error) {
     return [];
   }
@@ -75,6 +119,24 @@ function downloadProject(project) {
   URL.revokeObjectURL(url);
 }
 
+function beginEditing(project) {
+  editingProjectId = project.id;
+  projectName.value = project.name;
+  projectType.value = project.type;
+  projectIdea.value = project.idea;
+  submitButton.textContent = "حفظ التعديلات";
+  showFeedback("أنت تعدّل الآن: " + project.name, false);
+  ideaForm.scrollIntoView({ behavior: "smooth", block: "center" });
+  projectName.focus();
+}
+
+function cancelEditing() {
+  editingProjectId = null;
+  ideaForm.reset();
+  submitButton.textContent = "أنشئ مخطط مشروعي ←";
+  showFeedback("تم إلغاء التعديل. لم يتم حذف أي مشروع.", false);
+}
+
 function renderProjects() {
   if (!projectList || !projectCount) return;
   projectCount.textContent = projects.length + (projects.length === 1 ? " مشروع" : " مشروعات");
@@ -103,6 +165,12 @@ function renderProjects() {
     const actions = document.createElement("div");
     actions.className = "saved-project-actions";
 
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "mini-action";
+    editButton.textContent = "فتح وتعديل";
+    editButton.addEventListener("click", () => beginEditing(project));
+
     const exportButton = document.createElement("button");
     exportButton.type = "button";
     exportButton.className = "mini-action";
@@ -115,33 +183,40 @@ function renderProjects() {
     deleteButton.textContent = "حذف";
     deleteButton.addEventListener("click", () => {
       projects = projects.filter((item) => item.id !== project.id);
-      if (persistProjects()) renderProjects();
-      else window.alert("تعذر تحديث التخزين المحلي. تأكد من وجود مساحة متاحة في المتصفح.");
+      if (editingProjectId === project.id) cancelEditing();
+      if (persistProjects()) {
+        renderProjects();
+        showFeedback("تم حذف المسودة من هذا الجهاز.", false);
+      } else {
+        showFeedback("تعذر تحديث التخزين المحلي. تأكد من وجود مساحة متاحة.", true);
+      }
     });
 
-    actions.append(exportButton, deleteButton);
+    actions.append(editButton, exportButton, deleteButton);
     card.append(details, actions);
     projectList.appendChild(card);
   });
 }
 
-if (ideaForm && result) {
+if (ideaForm && result && projectList && projectCount) {
   projects = readProjects();
+  persistProjects();
   renderProjects();
 
   ideaForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const type = document.querySelector("#project-type").value;
-    const name = document.querySelector("#project-name").value.trim();
-    const idea = document.querySelector("#project-idea").value.trim();
-
+    const name = projectName.value.trim();
+    const type = projectType.value;
+    const idea = projectIdea.value.trim();
     if (!name || !idea) return;
 
+    const previous = editingProjectId
+      ? projects.find((item) => item.id === editingProjectId)
+      : null;
+
     const project = {
-      id: (window.crypto && crypto.randomUUID)
-        ? crypto.randomUUID()
-        : String(Date.now()) + "-" + Math.random().toString(16).slice(2),
+      id: previous ? previous.id : makeId(),
       name,
       type,
       idea,
@@ -149,24 +224,76 @@ if (ideaForm && result) {
       status: "مسودة"
     };
 
-    projects = [project, ...projects.filter((item) => item.name !== name)].slice(0, 30);
+    const withoutCurrent = projects.filter((item) =>
+      item.id !== project.id && item.name !== project.name
+    );
+    projects = [project, ...withoutCurrent].slice(0, MAX_PROJECTS);
+
     if (!persistProjects()) {
-      window.alert("لم نتمكن من الحفظ على هذا الجهاز. يمكنك تصدير بيانات المشروع يدويًا بعد إعادة المحاولة.");
+      showFeedback("لم نتمكن من الحفظ على هذا الجهاز. لم نرسل بياناتك لأي خادم.", true);
       return;
     }
 
-    const heading = document.createElement("h3");
-    heading.textContent = "تم حفظ مخطط مشروعك: " + name;
+    editingProjectId = null;
+    ideaForm.reset();
+    submitButton.textContent = "أنشئ مخطط مشروعي ←";
 
+    const heading = document.createElement("h3");
+    heading.textContent = previous ? "تم تحديث مشروعك: " + name : "تم حفظ مخطط مشروعك: " + name;
     const summary = document.createElement("p");
     summary.textContent = "نوع المشروع: " + type + " — ملخص الفكرة: " + idea;
-
     const note = document.createElement("p");
-    note.textContent = "المشروع محفوظ محليًا على هذا الجهاز فقط. استخدم زر «تصدير» للاحتفاظ بنسخة خارج المتصفح.";
-
+    note.textContent = "المشروع محفوظ محليًا على هذا الجهاز فقط. يمكنك تصديره للاحتفاظ بنسخة احتياطية.";
     result.replaceChildren(heading, summary, note);
     result.hidden = false;
     renderProjects();
+    showFeedback("تم الحفظ بنجاح على هذا الجهاز.", false);
     result.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
+
+  if (projectImport) {
+    projectImport.addEventListener("change", async () => {
+      const file = projectImport.files && projectImport.files[0];
+      if (!file) return;
+      projectImport.value = "";
+
+      if (file.size > MAX_IMPORT_BYTES) {
+        showFeedback("الملف أكبر من الحد المسموح (1 ميجابايت).", true);
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(await file.text());
+        const incoming = Array.isArray(parsed) ? parsed : [parsed];
+        const valid = incoming.filter(isValidProject).map(normalizeProject);
+
+        if (!valid.length) {
+          showFeedback("الملف لا يحتوي على مشروع صالح من كوكب الكرتون.", true);
+          return;
+        }
+
+        const merged = [...valid, ...projects];
+        const unique = [];
+        const seen = new Set();
+        merged.forEach((item) => {
+          const key = item.id || item.name;
+          if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(item);
+          }
+        });
+
+        projects = unique.slice(0, MAX_PROJECTS);
+        if (!persistProjects()) {
+          showFeedback("تعذر حفظ المشروع المستورد. قد تكون مساحة المتصفح ممتلئة.", true);
+          return;
+        }
+
+        renderProjects();
+        showFeedback("تم استيراد " + Math.min(valid.length, MAX_PROJECTS) + " مشروع/مشروعات إلى هذا الجهاز.", false);
+      } catch (error) {
+        showFeedback("تعذر قراءة الملف. تأكد أنه ملف JSON سليم.", true);
+      }
+    });
+  }
 }
