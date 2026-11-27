@@ -73,7 +73,7 @@ function normalizeProject(item) {
       ? new Date(item.updatedAt).toISOString()
       : new Date().toISOString(),
     status: "مسودة",
-    storyboard: Array.isArray(item.storyboard) ? item.storyboard.slice(0, 20) : null
+    storyboard: normalizeStoryboard(item.storyboard)
   };
 }
 
@@ -122,26 +122,60 @@ function downloadProject(project) {
 
 function createStoryboard(project) {
   const idea = project.idea.trim();
+  const sentences = idea.split(/[.!?؟؛؛\\n]+/).map((part) => part.trim()).filter(Boolean);
+  const premise = sentences.join("، ") || idea;
   const beats = [
-    { title: "الافتتاح والخطاف", action: "ابدأ بلحظة مشوقة تكشف مشكلة أو مفاجأة مرتبطة بفكرة القصة: " + idea, visual: "لقطة سينمائية واسعة للعالم والشخصية الرئيسية، حركة كاميرا بطيئة، إضاءة درامية، من دون كتابة أو شعارات." },
-    { title: "بداية المغامرة", action: "تظهر الشخصية الرئيسية وتكتشف أن عليها خوض مغامرة لحل ما بدأ في الافتتاح.", visual: "لقطة متوسطة للشخصية وهي تتحرك داخل البيئة الرئيسية، تعبير وجه واضح وخلفية غنية بالتفاصيل." },
-    { title: "العقبة الأولى", action: "تواجه الشخصية عائقًا غير متوقع يجعل المهمة أصعب ويزيد التشويق.", visual: "لقطات قريبة لردود الفعل ثم لقطة حركة توضح العقبة، مع الحفاظ على ثبات تصميم الشخصية." },
-    { title: "الحل والشجاعة", action: "تستخدم الشخصية فكرة ذكية أو مساعدة صديق لتجاوز العقبة والتقدم نحو الهدف.", visual: "حركة واضحة ومتتابعة، تفاعل بين الشخصيات، إضاءة أكثر دفئًا وإحساس بالأمل." },
-    { title: "النهاية والتمهيد", action: "تصل المغامرة إلى نتيجة مُرضية، مع لمحة أخيرة تفتح الباب لحكاية جديدة.", visual: "لقطة ختامية واسعة، الشخصيات في تكوين واضح، نهاية عاطفية مناسبة لجميع أفراد الأسرة." }
+    ["الافتتاح والخطاف", "افتح بلحظة مفاجئة تلفت الانتباه وتلمّح إلى التحدي الأساسي."],
+    ["التعرّف على البطل والعالم", "عرّف المشاهد بالشخصية الرئيسية والمكان الذي تدور فيه المغامرة."],
+    ["اكتشاف الهدف", "اكتشف الهدف أو السر الذي يدفع الشخصية إلى بدء الرحلة."],
+    ["ظهور العقبة", "ضع الشخصية أمام أول عائق حقيقي يهدد نجاح المهمة."],
+    ["تصاعد الخطر", "اجعل المشكلة أكثر صعوبة وأظهر أثرها على الشخصيات."],
+    ["الفكرة والحل", "تعاون الشخصيات أو استخدم فكرة ذكية لبدء حل المشكلة."],
+    ["الذروة", "اعرض المواجهة أو اللحظة الحاسمة التي يتوقف عليها نجاح المغامرة."],
+    ["النهاية والرسالة", "اختم بنتيجة واضحة ورسالة عائلية لطيفة، ويمكن ترك لمحة لمغامرة جديدة."]
   ];
+  const sceneSentences = beats.map((beat, index) => {
+    if (!sentences.length) return premise;
+    return sentences[Math.min(sentences.length - 1, Math.floor(index * sentences.length / beats.length))];
+  });
+  const scenes = beats.map((beat, index) => ({
+    number: index + 1,
+    title: beat[0],
+    action: beat[1] + " تفاصيل مرتبطة بالقصة: " + sceneSentences[index],
+    visualPrompt: "Cinematic 3D family animation. " + beat[1] + " Story context: " + premise + ". Keep character appearance consistent across shots, expressive faces, clear staging, polished lighting, no text, no logos, no watermark.",
+    durationSeconds: 12
+  }));
   return {
-    version: 1,
+    version: 2,
     generatedAt: new Date().toISOString(),
     format: "16:9",
-    totalDurationSeconds: 100,
-    note: "خطة مشاهد نصية محلية؛ لا تحتوي على صور مولدة أو حركة أو ملف فيديو.",
-    scenes: beats.map((beat, index) => ({
-      number: index + 1,
-      title: beat.title,
-      action: beat.action,
-      visualPrompt: beat.visual + " موضوع القصة: " + idea + "؛ أسلوب رسوم ثلاثية الأبعاد سينمائي عائلي، اتساق بصري للشخصيات، بلا نصوص أو شعارات أو علامات مائية.",
-      durationSeconds: 20
-    }))
+    totalDurationSeconds: 96,
+    note: "خطة مشاهد نصية محلية قابلة للتعديل؛ لا تحتوي على صور مولدة أو حركة أو ملف فيديو.",
+    scenes
+  };
+}
+
+function normalizeStoryboard(storyboard) {
+  if (!storyboard) return null;
+  const source = Array.isArray(storyboard)
+    ? storyboard
+    : (Array.isArray(storyboard.scenes) ? storyboard.scenes : []);
+  if (!source.length) return null;
+  const scenes = source.slice(0, 20).map((scene, index) => ({
+    number: index + 1,
+    title: String(scene.title || ("المشهد " + (index + 1))).slice(0, 120),
+    action: String(scene.action || "").slice(0, 2000),
+    visualPrompt: String(scene.visualPrompt || scene.prompt || "").slice(0, 3000),
+    dialogue: String(scene.dialogue || "").slice(0, 1000),
+    durationSeconds: Math.max(1, Math.min(600, Number.parseInt(scene.durationSeconds, 10) || 12))
+  }));
+  return {
+    version: 2,
+    generatedAt: storyboard.generatedAt || new Date().toISOString(),
+    format: storyboard.format || "16:9",
+    totalDurationSeconds: scenes.reduce((sum, scene) => sum + scene.durationSeconds, 0),
+    note: "خطة مشاهد نصية محلية قابلة للتعديل؛ لا تحتوي على صور مولدة أو حركة أو ملف فيديو.",
+    scenes
   };
 }
 
@@ -225,25 +259,10 @@ function renderProjects() {
     exportButton.textContent = "تصدير";
     exportButton.addEventListener("click", () => downloadProject(project));
 
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "mini-action danger";
-    deleteButton.textContent = "حذف";
-    deleteButton.addEventListener("click", () => {
-      projects = projects.filter((item) => item.id !== project.id);
-      if (editingProjectId === project.id) cancelEditing();
-      if (persistProjects()) {
-        renderProjects();
-        showFeedback("تم حذف المسودة من هذا الجهاز.", false);
-      } else {
-        showFeedback("تعذر تحديث التخزين المحلي. تأكد من وجود مساحة متاحة.", true);
-      }
-    });
-
     const storyboardButton = document.createElement("button");
     storyboardButton.type = "button";
     storyboardButton.className = "mini-action storyboard-action";
-    storyboardButton.textContent = project.storyboard ? "تحديث المشاهد" : "إعداد المشاهد";
+    storyboardButton.textContent = project.storyboard ? "إعادة إعداد المشاهد" : "إعداد المشاهد";
     storyboardButton.addEventListener("click", () => {
       project.storyboard = createStoryboard(project);
       project.status = "تم تجهيز مخطط المشاهد";
@@ -253,7 +272,7 @@ function renderProjects() {
         return;
       }
       renderProjects();
-      showFeedback("تم إعداد 5 مشاهد وحفظها محليًا. هذا مخطط إنتاج وليس فيديو متحركًا.", false);
+      showFeedback("تم إعداد 8 مشاهد مرتبطة بملخص القصة وحفظها محليًا. يمكنك تعديلها الآن؛ هذا ليس فيديو متحركًا.", false);
     });
 
     const exportStoryboardButton = document.createElement("button");
@@ -265,60 +284,116 @@ function renderProjects() {
       if (project.storyboard) downloadProductionPack(project);
     });
 
-    actions.append(storyboardButton, exportStoryboardButton);
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "mini-action danger";
+    deleteButton.textContent = "حذف";
+    deleteButton.addEventListener("click", () => {
+      if (!window.confirm("هل تريد حذف مسودة «" + project.name + "» من هذا الجهاز؟")) return;
+      const previousProjects = projects;
+      projects = projects.filter((item) => item.id !== project.id);
+      if (editingProjectId === project.id) cancelEditing();
+      if (persistProjects()) {
+        renderProjects();
+        showFeedback("تم حذف المسودة من هذا الجهاز.", false);
+      } else {
+        projects = previousProjects;
+        showFeedback("تعذر تحديث التخزين المحلي. لم يتم تأكيد الحذف.", true);
+      }
+    });
+
+    actions.append(storyboardButton, exportStoryboardButton, editButton, exportButton, deleteButton);
+
     if (project.storyboard && Array.isArray(project.storyboard.scenes)) {
       const scenePanel = document.createElement("details");
       scenePanel.className = "storyboard-panel";
       const summary = document.createElement("summary");
-      summary.textContent = "خطة المشاهد (" + project.storyboard.scenes.length + ")";
+      summary.textContent = "خطة المشاهد (" + project.storyboard.scenes.length + ") — " + project.storyboard.totalDurationSeconds + " ثانية";
       scenePanel.appendChild(summary);
-      project.storyboard.scenes.forEach((scene) => {
+
+      const fields = [];
+      project.storyboard.scenes.forEach((scene, index) => {
         const sceneCard = document.createElement("section");
         sceneCard.className = "storyboard-scene";
-        const sceneTitle = document.createElement("strong");
-        sceneTitle.textContent = scene.number + ". " + scene.title;
-        const sceneAction = document.createElement("p");
-        sceneAction.textContent = scene.action;
-        const sceneVisual = document.createElement("p");
-        sceneVisual.textContent = "الوصف البصري: " + scene.visualPrompt;
-        const sceneTime = document.createElement("small");
-        sceneTime.textContent = "المدة المقترحة: " + scene.durationSeconds + " ثانية";
-        sceneCard.append(sceneTitle, sceneAction, sceneVisual, sceneTime);
+        const heading = document.createElement("strong");
+        heading.textContent = "المشهد " + (index + 1);
+        const titleLabel = document.createElement("label");
+        titleLabel.textContent = "عنوان المشهد";
+        const titleInput = document.createElement("input");
+        titleInput.type = "text";
+        titleInput.maxLength = 120;
+        titleInput.value = scene.title;
+        titleLabel.appendChild(titleInput);
+
+        const actionLabel = document.createElement("label");
+        actionLabel.textContent = "ما يحدث في المشهد";
+        const actionInput = document.createElement("textarea");
+        actionInput.rows = 3;
+        actionInput.maxLength = 2000;
+        actionInput.value = scene.action;
+        actionLabel.appendChild(actionInput);
+
+        const visualLabel = document.createElement("label");
+        visualLabel.textContent = "الوصف البصري (بالإنجليزية)";
+        const visualInput = document.createElement("textarea");
+        visualInput.rows = 3;
+        visualInput.maxLength = 3000;
+        visualInput.value = scene.visualPrompt;
+        visualLabel.appendChild(visualInput);
+
+        const durationLabel = document.createElement("label");
+        durationLabel.textContent = "المدة بالثواني";
+        const durationInput = document.createElement("input");
+        durationInput.type = "number";
+        durationInput.min = "1";
+        durationInput.max = "600";
+        durationInput.step = "1";
+        durationInput.value = String(scene.durationSeconds);
+        durationLabel.appendChild(durationInput);
+
+        sceneCard.append(heading, titleLabel, actionLabel, visualLabel, durationLabel);
         scenePanel.appendChild(sceneCard);
+        fields.push({ scene, titleInput, actionInput, visualInput, durationInput });
       });
+
+      const saveScenesButton = document.createElement("button");
+      saveScenesButton.type = "button";
+      saveScenesButton.className = "mini-action storyboard-action";
+      saveScenesButton.textContent = "حفظ تعديلات المشاهد";
+      saveScenesButton.addEventListener("click", () => {
+        for (const field of fields) {
+          const duration = Number.parseInt(field.durationInput.value, 10);
+          if (!field.titleInput.value.trim() || !field.actionInput.value.trim() ||
+              !field.visualInput.value.trim() || !Number.isInteger(duration) || duration < 1 || duration > 600) {
+            showFeedback("راجع بيانات كل مشهد: العنوان والوصف والمدة من 1 إلى 600 ثانية مطلوبة.", true);
+            return;
+          }
+        }
+        fields.forEach((field, index) => {
+          field.scene.number = index + 1;
+          field.scene.title = field.titleInput.value.trim();
+          field.scene.action = field.actionInput.value.trim();
+          field.scene.visualPrompt = field.visualInput.value.trim();
+          field.scene.durationSeconds = Number.parseInt(field.durationInput.value, 10);
+        });
+        project.storyboard.totalDurationSeconds = fields.reduce((sum, field) => sum + field.scene.durationSeconds, 0);
+        project.updatedAt = new Date().toISOString();
+        if (!persistProjects()) {
+          showFeedback("تعذر حفظ التعديلات محليًا. حاول تصدير المشروع كنسخة احتياطية.", true);
+          return;
+        }
+        renderProjects();
+        showFeedback("تم حفظ تعديلات المشاهد والمدة الإجمالية محليًا.", false);
+      });
+      scenePanel.appendChild(saveScenesButton);
       card.appendChild(scenePanel);
     }
 
-    const sb = document.createElement("button"); sb.type="button"; sb.className="mini-action"; sb.textContent="إعداد المشاهد"; sb.addEventListener("click",()=>makeStoryboard(project));
-    actions.append(editButton, exportButton, sb, deleteButton);
     card.append(details, actions);
     projectList.appendChild(card);
   });
 }
 
-
-function makeStoryboard(project) {
- const scenes = [
- ["الاستعداد للرحلة","يقف عمر بجوار غواصة صفراء ويرتدي بدلة غوص زرقاء.","عمر: اليوم سأكتشف أسرار أعماق البحار!","Cinematic 3D family animation, young boy Omar in blue diving suit beside a small yellow submarine on ocean surface, no text, 16:9."],
- ["النزول إلى الأعماق","تغوص الغواصة بين أسراب الأسماك ويخفت ضوء الشمس تدريجيًا.","عمر: يا له من عالم رائع!","3D animated yellow mini submarine descending into deep blue ocean, colorful fish and sun rays, no text, 16:9."],
- ["حديقة المرجان","يشاهد عمر الشعاب المرجانية والأسماك الملونة وقناديل البحر المضيئة.","عمر: لم أتخيل أن يكون البحر بهذا الجمال!","Beautiful underwater coral garden, tropical fish and glowing jellyfish, cinematic 3D cartoon, no text, 16:9."],
- ["نداء الاستغاثة","تقترب سلحفاة صغيرة من الغواصة وتطلب المساعدة.","السلحفاة: أرجوك ساعدني في العثور على صديقتي!","Friendly sea turtle asking a young boy in a yellow submarine for help, underwater 3D animation, no text, 16:9."],
- ["السفينة الغارقة","تقود السلحفاة عمر إلى سفينة قديمة تستقر في قاع المحيط.","عمر: سنبحث عنها معًا، لا تقلقي.","Mysterious old shipwreck on ocean floor, sea plants swaying, yellow submarine approaching, 3D cartoon, no text, 16:9."],
- ["حل اللغز","يكتشف عمر شبكة صيد قديمة علقت بها السلحفاة الصغيرة.","عمر: وجدتها! سأحررها بحذر.","Tiny sea turtle caught in abandoned fishing net near shipwreck, careful rescue, cinematic 3D animation, no text, 16:9."],
- ["إنقاذ الصديقة","يحرر عمر السلحفاة وتسبح مع صديقتها حول الغواصة بسعادة.","السلحفاة: شكرًا لك يا عمر!","Two happy sea turtles swimming beside yellow submarine, joyful bubbles and coral, 3D family cartoon, no text, 16:9."],
- ["العودة إلى السطح","تصعد الغواصة ويلوح عمر لأصدقائه ويتذكر أهمية حماية البحر.","عمر: يجب أن نحافظ على البحر وكل كائناته.","Yellow submarine rising toward bright ocean surface, boy waving to sea turtles, uplifting 3D animation, no text, 16:9."]
- ];
- let panel=document.querySelector("#storyboard-panel");
- if(!panel){ panel=document.createElement("section"); panel.id="storyboard-panel"; panel.className="storyboard-panel"; panel.innerHTML='<h3 id="storyboard-title"></h3><p>مخطط نصي فقط؛ لا ينتج صورًا أو أنيميشن أو فيديو.</p><div id="storyboard-scenes"></div><button type="button" id="storyboard-export" class="mini-action">تصدير المشاهد JSON</button>'; result.after(panel); }
- project.storyboard=scenes.map((s,i)=>({number:i+1,title:s[0],action:s[1],dialogue:s[2],prompt:s[3],duration:"8 ثوانٍ"}));
- if(!persistProjects()){showFeedback("تعذر حفظ المشاهد على هذا الجهاز.",true);return;}
- document.querySelector("#storyboard-title").textContent=project.name+" — مخطط المشاهد";
- const list=document.querySelector("#storyboard-scenes"); list.replaceChildren();
- project.storyboard.forEach(s=>{const card=document.createElement("article");card.className="storyboard-scene";const h=document.createElement("h4");h.textContent="المشهد "+s.number+": "+s.title;const a=document.createElement("p");a.textContent="الحركة: "+s.action;const d=document.createElement("p");d.textContent="الحوار: "+s.dialogue;const p=document.createElement("p");p.textContent="الوصف البصري: "+s.prompt;card.append(h,a,d,p);list.append(card);});
- document.querySelector("#storyboard-export").onclick=()=>{const blob=new Blob([JSON.stringify({title:project.name,synopsis:project.idea,scenes:project.storyboard},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="kawkab-storyboard.json";a.click();URL.revokeObjectURL(url);};
- panel.scrollIntoView({behavior:"smooth",block:"start"});
- showFeedback("تم إعداد 8 مشاهد وحفظها. هذا تخطيط نصي وليس توليد فيديو.",false);
-}
 
 if (ideaForm && result && projectList && projectCount) {
   projects = readProjects();
