@@ -20,3 +20,12 @@ footer{padding:27px 9%;display:flex;align-items:center;justify-content:space-bet
 .project-feedback.is-error{color:#b33b3b}
 .saved-project-actions{flex-wrap:wrap}
 @media(max-width:420px){.saved-project-actions{width:100%}.mini-action{flex:1}}
+
+.storyboard-action{background:#e9f7ff!important;color:#075e98!important;border-color:#bfe6f8!important}
+.storyboard-panel{flex-basis:100%;margin-top:10px;padding:12px;border:1px solid #d9e9f5;border-radius:12px;background:#f8fbff;color:#173653;font-size:11px}
+.storyboard-panel summary{cursor:pointer;font-weight:900;color:#0c6fae;padding:4px}
+.storyboard-scene{padding:10px 4px;border-top:1px solid #e3edf6;line-height:1.8}
+.storyboard-scene strong{color:#0b5f98}
+.storyboard-scene p{margin:5px 0;color:#52657b;overflow-wrap:anywhere}
+.storyboard-scene small{color:#16764d;font-weight:800}
+.mini-action:disabled{opacity:.45;cursor:not-allowed}
