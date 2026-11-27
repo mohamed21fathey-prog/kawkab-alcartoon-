@@ -54,9 +54,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_ledger_reference_reason
   ON wallet_ledger(reference_id, reason) WHERE reference_id IS NOT NULL;
 
 CREATE VIEW IF NOT EXISTS wallet_balances AS
-  SELECT user_id, COALESCE(SUM(delta), 0) AS balance
-  FROM wallet_ledger
-  GROUP BY user_id;
+  SELECT users.id AS user_id, COALESCE(SUM(wallet_ledger.delta), 0) AS balance
+  FROM users
+  LEFT JOIN wallet_ledger ON wallet_ledger.user_id = users.id
+  GROUP BY users.id;
 
 CREATE TRIGGER IF NOT EXISTS wallet_ledger_no_update
 BEFORE UPDATE ON wallet_ledger
