@@ -297,3 +297,5 @@ if (ideaForm && result && projectList && projectCount) {
     });
   }
 }
+
+// Local storyboard planning is a text-only pre-production aid; it does not render video.
