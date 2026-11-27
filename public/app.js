@@ -119,6 +119,53 @@ function downloadProject(project) {
   URL.revokeObjectURL(url);
 }
 
+function createStoryboard(project) {
+  const idea = project.idea.trim();
+  const beats = [
+    { title: "الافتتاح والخطاف", action: "ابدأ بلحظة مشوقة تكشف مشكلة أو مفاجأة مرتبطة بفكرة القصة: " + idea, visual: "لقطة سينمائية واسعة للعالم والشخصية الرئيسية، حركة كاميرا بطيئة، إضاءة درامية، من دون كتابة أو شعارات." },
+    { title: "بداية المغامرة", action: "تظهر الشخصية الرئيسية وتكتشف أن عليها خوض مغامرة لحل ما بدأ في الافتتاح.", visual: "لقطة متوسطة للشخصية وهي تتحرك داخل البيئة الرئيسية، تعبير وجه واضح وخلفية غنية بالتفاصيل." },
+    { title: "العقبة الأولى", action: "تواجه الشخصية عائقًا غير متوقع يجعل المهمة أصعب ويزيد التشويق.", visual: "لقطات قريبة لردود الفعل ثم لقطة حركة توضح العقبة، مع الحفاظ على ثبات تصميم الشخصية." },
+    { title: "الحل والشجاعة", action: "تستخدم الشخصية فكرة ذكية أو مساعدة صديق لتجاوز العقبة والتقدم نحو الهدف.", visual: "حركة واضحة ومتتابعة، تفاعل بين الشخصيات، إضاءة أكثر دفئًا وإحساس بالأمل." },
+    { title: "النهاية والتمهيد", action: "تصل المغامرة إلى نتيجة مُرضية، مع لمحة أخيرة تفتح الباب لحكاية جديدة.", visual: "لقطة ختامية واسعة، الشخصيات في تكوين واضح، نهاية عاطفية مناسبة لجميع أفراد الأسرة." }
+  ];
+  return {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    format: "16:9",
+    totalDurationSeconds: 100,
+    note: "خطة مشاهد نصية محلية؛ لا تحتوي على صور مولدة أو حركة أو ملف فيديو.",
+    scenes: beats.map((beat, index) => ({
+      number: index + 1,
+      title: beat.title,
+      action: beat.action,
+      visualPrompt: beat.visual + " موضوع القصة: " + idea + "؛ أسلوب رسوم ثلاثية الأبعاد سينمائي عائلي، اتساق بصري للشخصيات، بلا نصوص أو شعارات أو علامات مائية.",
+      durationSeconds: 20
+    }))
+  };
+}
+
+function downloadProductionPack(project) {
+  const pack = {
+    platform: "كوكب الكرتون",
+    project: project,
+    exportType: "storyboard-production-plan",
+    disclaimer: "هذا ملف خطة إنتاج نصية وليس فيديو أو رسومًا متحركة."
+  };
+  const blob = new Blob([JSON.stringify(pack, null, 2)], {
+    type: "application/json;charset=utf-8"
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = (project.name || "kawkab-production")
+    .replace(/[^\p{L}\p{N}\-_ ]/gu, "")
+    .trim().replace(/\s+/g, "-") + "-production.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function beginEditing(project) {
   editingProjectId = project.id;
   projectName.value = project.name;
@@ -191,6 +238,55 @@ function renderProjects() {
         showFeedback("تعذر تحديث التخزين المحلي. تأكد من وجود مساحة متاحة.", true);
       }
     });
+
+    const storyboardButton = document.createElement("button");
+    storyboardButton.type = "button";
+    storyboardButton.className = "mini-action storyboard-action";
+    storyboardButton.textContent = project.storyboard ? "تحديث المشاهد" : "إعداد المشاهد";
+    storyboardButton.addEventListener("click", () => {
+      project.storyboard = createStoryboard(project);
+      project.status = "تم تجهيز مخطط المشاهد";
+      project.updatedAt = new Date().toISOString();
+      if (!persistProjects()) {
+        showFeedback("تعذر حفظ مخطط المشاهد على هذا الجهاز.", true);
+        return;
+      }
+      renderProjects();
+      showFeedback("تم إعداد 5 مشاهد وحفظها محليًا. هذا مخطط إنتاج وليس فيديو متحركًا.", false);
+    });
+
+    const exportStoryboardButton = document.createElement("button");
+    exportStoryboardButton.type = "button";
+    exportStoryboardButton.className = "mini-action";
+    exportStoryboardButton.textContent = "تصدير خطة الإنتاج";
+    exportStoryboardButton.disabled = !project.storyboard;
+    exportStoryboardButton.addEventListener("click", () => {
+      if (project.storyboard) downloadProductionPack(project);
+    });
+
+    actions.append(storyboardButton, exportStoryboardButton);
+    if (project.storyboard && Array.isArray(project.storyboard.scenes)) {
+      const scenePanel = document.createElement("details");
+      scenePanel.className = "storyboard-panel";
+      const summary = document.createElement("summary");
+      summary.textContent = "خطة المشاهد (" + project.storyboard.scenes.length + ")";
+      scenePanel.appendChild(summary);
+      project.storyboard.scenes.forEach((scene) => {
+        const sceneCard = document.createElement("section");
+        sceneCard.className = "storyboard-scene";
+        const sceneTitle = document.createElement("strong");
+        sceneTitle.textContent = scene.number + ". " + scene.title;
+        const sceneAction = document.createElement("p");
+        sceneAction.textContent = scene.action;
+        const sceneVisual = document.createElement("p");
+        sceneVisual.textContent = "الوصف البصري: " + scene.visualPrompt;
+        const sceneTime = document.createElement("small");
+        sceneTime.textContent = "المدة المقترحة: " + scene.durationSeconds + " ثانية";
+        sceneCard.append(sceneTitle, sceneAction, sceneVisual, sceneTime);
+        scenePanel.appendChild(sceneCard);
+      });
+      card.appendChild(scenePanel);
+    }
 
     actions.append(editButton, exportButton, deleteButton);
     card.append(details, actions);
@@ -297,3 +393,5 @@ if (ideaForm && result && projectList && projectCount) {
     });
   }
 }
+
+// Local storyboard planning is a text-only pre-production aid; it does not render video.
