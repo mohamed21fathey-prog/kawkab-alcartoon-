@@ -72,7 +72,8 @@ function normalizeProject(item) {
     updatedAt: item.updatedAt && !Number.isNaN(Date.parse(item.updatedAt))
       ? new Date(item.updatedAt).toISOString()
       : new Date().toISOString(),
-    status: "مسودة"
+    status: "مسودة",
+    storyboard: Array.isArray(item.storyboard) ? item.storyboard.slice(0, 20) : null
   };
 }
 
