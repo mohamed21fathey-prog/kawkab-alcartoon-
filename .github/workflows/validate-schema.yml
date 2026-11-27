@@ -6,6 +6,8 @@ on:
       - "index.html"
       - "app.js"
       - "style.css"
+      - "public/**"
+      - "wrangler.jsonc"
       - "scripts/**"
       - "migrations/**/*.sql"
       - ".github/workflows/validate-schema.yml"
