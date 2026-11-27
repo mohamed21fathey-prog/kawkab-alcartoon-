@@ -95,6 +95,11 @@
       <section class="saved-projects" aria-labelledby="saved-projects-title">
         <div class="saved-projects-head"><h3 id="saved-projects-title">مشاريعي المحفوظة</h3><span id="project-count">0 مشروع</span></div>
         <p class="saved-projects-note">المشاريع محفوظة محليًا في نفس المتصفح والجهاز فقط.</p>
+        <div class="project-tools">
+          <label class="import-project-label" for="project-import">استيراد ملف مشروع JSON</label>
+          <input id="project-import" class="project-import-input" type="file" accept=".json,application/json">
+        </div>
+        <p class="project-feedback" id="project-feedback" role="status" aria-live="polite"></p>
         <div id="saved-project-list" class="saved-project-list" aria-live="polite"><p class="empty-projects">لا توجد مشاريع محفوظة حتى الآن.</p></div>
       </section>
     </form>
