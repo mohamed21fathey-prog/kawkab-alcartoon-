@@ -288,10 +288,35 @@ function renderProjects() {
       card.appendChild(scenePanel);
     }
 
-    actions.append(editButton, exportButton, deleteButton);
+    const sb = document.createElement("button"); sb.type="button"; sb.className="mini-action"; sb.textContent="إعداد المشاهد"; sb.addEventListener("click",()=>makeStoryboard(project));
+    actions.append(editButton, exportButton, sb, deleteButton);
     card.append(details, actions);
     projectList.appendChild(card);
   });
+}
+
+
+function makeStoryboard(project) {
+ const scenes = [
+ ["الاستعداد للرحلة","يقف عمر بجوار غواصة صفراء ويرتدي بدلة غوص زرقاء.","عمر: اليوم سأكتشف أسرار أعماق البحار!","Cinematic 3D family animation, young boy Omar in blue diving suit beside a small yellow submarine on ocean surface, no text, 16:9."],
+ ["النزول إلى الأعماق","تغوص الغواصة بين أسراب الأسماك ويخفت ضوء الشمس تدريجيًا.","عمر: يا له من عالم رائع!","3D animated yellow mini submarine descending into deep blue ocean, colorful fish and sun rays, no text, 16:9."],
+ ["حديقة المرجان","يشاهد عمر الشعاب المرجانية والأسماك الملونة وقناديل البحر المضيئة.","عمر: لم أتخيل أن يكون البحر بهذا الجمال!","Beautiful underwater coral garden, tropical fish and glowing jellyfish, cinematic 3D cartoon, no text, 16:9."],
+ ["نداء الاستغاثة","تقترب سلحفاة صغيرة من الغواصة وتطلب المساعدة.","السلحفاة: أرجوك ساعدني في العثور على صديقتي!","Friendly sea turtle asking a young boy in a yellow submarine for help, underwater 3D animation, no text, 16:9."],
+ ["السفينة الغارقة","تقود السلحفاة عمر إلى سفينة قديمة تستقر في قاع المحيط.","عمر: سنبحث عنها معًا، لا تقلقي.","Mysterious old shipwreck on ocean floor, sea plants swaying, yellow submarine approaching, 3D cartoon, no text, 16:9."],
+ ["حل اللغز","يكتشف عمر شبكة صيد قديمة علقت بها السلحفاة الصغيرة.","عمر: وجدتها! سأحررها بحذر.","Tiny sea turtle caught in abandoned fishing net near shipwreck, careful rescue, cinematic 3D animation, no text, 16:9."],
+ ["إنقاذ الصديقة","يحرر عمر السلحفاة وتسبح مع صديقتها حول الغواصة بسعادة.","السلحفاة: شكرًا لك يا عمر!","Two happy sea turtles swimming beside yellow submarine, joyful bubbles and coral, 3D family cartoon, no text, 16:9."],
+ ["العودة إلى السطح","تصعد الغواصة ويلوح عمر لأصدقائه ويتذكر أهمية حماية البحر.","عمر: يجب أن نحافظ على البحر وكل كائناته.","Yellow submarine rising toward bright ocean surface, boy waving to sea turtles, uplifting 3D animation, no text, 16:9."]
+ ];
+ let panel=document.querySelector("#storyboard-panel");
+ if(!panel){ panel=document.createElement("section"); panel.id="storyboard-panel"; panel.className="storyboard-panel"; panel.innerHTML='<h3 id="storyboard-title"></h3><p>مخطط نصي فقط؛ لا ينتج صورًا أو أنيميشن أو فيديو.</p><div id="storyboard-scenes"></div><button type="button" id="storyboard-export" class="mini-action">تصدير المشاهد JSON</button>'; result.after(panel); }
+ project.storyboard=scenes.map((s,i)=>({number:i+1,title:s[0],action:s[1],dialogue:s[2],prompt:s[3],duration:"8 ثوانٍ"}));
+ if(!persistProjects()){showFeedback("تعذر حفظ المشاهد على هذا الجهاز.",true);return;}
+ document.querySelector("#storyboard-title").textContent=project.name+" — مخطط المشاهد";
+ const list=document.querySelector("#storyboard-scenes"); list.replaceChildren();
+ project.storyboard.forEach(s=>{const card=document.createElement("article");card.className="storyboard-scene";const h=document.createElement("h4");h.textContent="المشهد "+s.number+": "+s.title;const a=document.createElement("p");a.textContent="الحركة: "+s.action;const d=document.createElement("p");d.textContent="الحوار: "+s.dialogue;const p=document.createElement("p");p.textContent="الوصف البصري: "+s.prompt;card.append(h,a,d,p);list.append(card);});
+ document.querySelector("#storyboard-export").onclick=()=>{const blob=new Blob([JSON.stringify({title:project.name,synopsis:project.idea,scenes:project.storyboard},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="kawkab-storyboard.json";a.click();URL.revokeObjectURL(url);};
+ panel.scrollIntoView({behavior:"smooth",block:"start"});
+ showFeedback("تم إعداد 8 مشاهد وحفظها. هذا تخطيط نصي وليس توليد فيديو.",false);
 }
 
 if (ideaForm && result && projectList && projectCount) {
