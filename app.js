@@ -22,6 +22,7 @@ if (toggle && nav) {
     if (event.key === "Escape" && nav.classList.contains("open")) {
       nav.classList.remove("open");
       toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "فتح القائمة");
       toggle.focus();
     }
   });
