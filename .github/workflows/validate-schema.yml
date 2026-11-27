@@ -1,8 +1,12 @@
-name: Validate database schema
+name: Validate Kawkab Al Cartoon
 
 on:
   pull_request:
     paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "scripts/**"
       - "migrations/**/*.sql"
       - ".github/workflows/validate-schema.yml"
   workflow_dispatch:
@@ -11,22 +15,62 @@ permissions:
   contents: read
 
 jobs:
-  sqlite-schema:
+  frontend:
+    name: Frontend checks
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Validate migration syntax and constraints
+      - name: Check JavaScript syntax
+        run: node --check app.js
+      - name: Validate HTML structure and local references
+        run: python3 scripts/validate_frontend.py
+
+  database:
+    name: SQLite schema and behavior checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Validate schema and wallet behavior
         shell: bash
         run: |
           set -euo pipefail
           DB_FILE="$(mktemp)"
           trap 'rm -f "$DB_FILE"' EXIT
-          sqlite3 "$DB_FILE" < migrations/0001_initial.sql
-          sqlite3 "$DB_FILE" "PRAGMA foreign_key_check;" | tee /tmp/foreign-key-check.txt
-          test ! -s /tmp/foreign-key-check.txt
+
+          sqlite3 -batch -bail "$DB_FILE" < migrations/0001_initial.sql
+
           for table in users projects assets wallet_ledger products orders audit_log; do
             sqlite3 "$DB_FILE" "SELECT name FROM sqlite_master WHERE type='table' AND name='$table';" | grep -qx "$table"
           done
           sqlite3 "$DB_FILE" "SELECT name FROM sqlite_master WHERE type='view' AND name='wallet_balances';" | grep -qx "wallet_balances"
-          echo "Schema syntax and expected objects validated."
+
+          sqlite3 -batch -bail "$DB_FILE" <<'SQL'
+          PRAGMA foreign_keys = ON;
+          INSERT INTO users (id, auth_subject, email, display_name) VALUES
+            ('user-1', 'subject-1', 'user1@example.test', 'Test User');
+          INSERT INTO wallet_ledger (id, user_id, delta, reason, idempotency_key)
+            VALUES ('ledger-1', 'user-1', 100, 'purchase', 'test-purchase-1');
+          INSERT INTO wallet_ledger (id, user_id, delta, reason, idempotency_key)
+            VALUES ('ledger-2', 'user-1', -25, 'usage', 'test-usage-1');
+          SQL
+
+          BALANCE="$(sqlite3 "$DB_FILE" "SELECT balance FROM wallet_balances WHERE user_id='user-1';")"
+          test "$BALANCE" = "75"
+
+          ZERO_USER_BALANCE="$(sqlite3 "$DB_FILE" "INSERT INTO users (id, auth_subject, email) VALUES ('user-2', 'subject-2', 'user2@example.test'); SELECT balance FROM wallet_balances WHERE user_id='user-2';")"
+          test "$ZERO_USER_BALANCE" = "0"
+
+          if sqlite3 "$DB_FILE" "UPDATE wallet_ledger SET delta = 999 WHERE id = 'ledger-1';" 2>/dev/null; then
+            echo "ERROR: wallet ledger update unexpectedly succeeded."
+            exit 1
+          fi
+          if sqlite3 "$DB_FILE" "DELETE FROM wallet_ledger WHERE id = 'ledger-1';" 2>/dev/null; then
+            echo "ERROR: wallet ledger delete unexpectedly succeeded."
+            exit 1
+          fi
+
+          FOREIGN_KEY_ERRORS="$(sqlite3 "$DB_FILE" "PRAGMA foreign_key_check;")"
+          test -z "$FOREIGN_KEY_ERRORS"
+          echo "Database schema, zero-balance users, ledger totals, append-only rules, and foreign keys validated."
