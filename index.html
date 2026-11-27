@@ -90,8 +90,13 @@
       <label for="project-idea">احكِ لنا فكرتك</label>
       <textarea id="project-idea" rows="4" maxlength="600" placeholder="اكتب ملخص الفكرة والشخصيات وما الذي تريد تقديمه..." required></textarea>
       <button class="btn primary submit-btn" type="submit">أنشئ مخطط مشروعي <span>←</span></button>
-      <p class="form-note">هذه أداة تخطيط أولية تعمل داخل المتصفح؛ لا تنشئ فيديو أو ترفع ملفات أو تخصم رصيدًا.</p>
+      <p class="form-note">احفظ مخططك على هذا الجهاز، أو صدّره كملف JSON. لا يتم رفع بياناتك إلى خادم ولا يتم إنشاء فيديو أو خصم رصيد.</p>
       <div class="idea-result" id="idea-result" aria-live="polite" hidden></div>
+      <section class="saved-projects" aria-labelledby="saved-projects-title">
+        <div class="saved-projects-head"><h3 id="saved-projects-title">مشاريعي المحفوظة</h3><span id="project-count">0 مشروع</span></div>
+        <p class="saved-projects-note">المشاريع محفوظة محليًا في نفس المتصفح والجهاز فقط.</p>
+        <div id="saved-project-list" class="saved-project-list" aria-live="polite"><p class="empty-projects">لا توجد مشاريع محفوظة حتى الآن.</p></div>
+      </section>
     </form>
   </section>
 
