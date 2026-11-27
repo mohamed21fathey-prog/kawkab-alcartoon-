@@ -38,3 +38,8 @@ footer{padding:27px 9%;display:flex;align-items:center;justify-content:space-bet
 .storyboard-scene h4{margin:0 0 8px;font-size:14px}
 .storyboard-scene p{margin:6px 0;color:#53647a;overflow-wrap:anywhere}
 @media(max-width:500px){.storyboard-panel{padding:12px}}
+
+.storyboard-scene label{display:block;margin:10px 0 5px;font-size:11px;font-weight:800;color:#29445f}
+.storyboard-scene input,.storyboard-scene textarea{display:block;width:100%;margin-top:5px;padding:9px 10px;border:1px solid #d6e2ee;border-radius:8px;background:#fff;color:#18314d;font:inherit;font-size:12px;line-height:1.7}
+.storyboard-scene input:focus,.storyboard-scene textarea:focus{outline:2px solid #72c8ee;outline-offset:1px}
+.storyboard-scene textarea{resize:vertical;min-height:70px}
