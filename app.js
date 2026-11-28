@@ -45,8 +45,9 @@ if (speakProjectButton) {
     const idea = projectIdea?.value.trim();
     const name = projectName?.value.trim();
     if (!idea) { showFeedback("اكتب فكرة المشروع أولًا حتى نستطيع قراءتها باللهجة المصرية.", true); return; }
+    const voice = getEgyptianVoice();
     const ok = speakEgyptian((name ? name + ". " : "") + idea, (message) => showFeedback(message, true));
-    if (ok) showFeedback("معاينة باللهجة المصرية عند توفر صوت ar-EG على جهازك؛ هذه ليست ملفًا صوتيًا.", false);
+    if (ok) showFeedback(voice && /^ar[-_]eg$/i.test(voice.lang) ? "تم تشغيل معاينة بصوت مصري متاح على جهازك. هذه ليست ملفًا صوتيًا." : "لم نعثر على صوت مصري ar-EG مثبت؛ شغّلنا أفضل صوت عربي متاح على جهازك. هذه معاينة فقط.", false);
   });
 }
 
@@ -84,7 +85,7 @@ function normalizeProject(item) {
     updatedAt: item.updatedAt && !Number.isNaN(Date.parse(item.updatedAt))
       ? new Date(item.updatedAt).toISOString()
       : new Date().toISOString(),
-    status: "مسودة",
+    status: typeof item.status === "string" && item.status.length <= 80 ? item.status : "مسودة",
     storyboard: normalizeStoryboard(item.storyboard)
   };
 }
@@ -551,15 +552,19 @@ if (ideaForm && result && projectList && projectCount) {
       ? projects.find((item) => item.id === editingProjectId)
       : null;
 
+    const briefChanged = Boolean(previous && previous.idea !== idea);
+    const storyboard = previous && !briefChanged && previous.storyboard
+      ? previous.storyboard
+      : createStoryboard({ name, type, idea });
     const project = {
       id: previous ? previous.id : makeId(),
       name,
       type,
       idea,
       updatedAt: new Date().toISOString(),
-      status: previous ? previous.status : "مسودة",
-      // Keep the user's edited storyboard when only the project brief changes.
-      storyboard: previous ? previous.storyboard : null
+      status: "تم إعداد مخطط المشاهد والحوار المبدئي",
+      // Regenerate the text plan when the story idea changes; preserve edits for title-only changes.
+      storyboard
     };
 
     const previousProjects = projects;
@@ -578,7 +583,7 @@ if (ideaForm && result && projectList && projectCount) {
     submitButton.textContent = "أنشئ مخطط مشروعي ←";
 
     const heading = document.createElement("h3");
-    heading.textContent = previous ? "تم تحديث مشروعك: " + name : "تم حفظ مخطط مشروعك: " + name;
+    heading.textContent = previous ? "تم تحديث مشروعك ومخططه: " + name : "تم إنشاء مشروعك ومخططه: " + name;
     const summary = document.createElement("p");
     summary.textContent = "نوع المشروع: " + type + " — ملخص الفكرة: " + idea;
     const note = document.createElement("p");
@@ -586,7 +591,7 @@ if (ideaForm && result && projectList && projectCount) {
     result.replaceChildren(heading, summary, note);
     result.hidden = false;
     renderProjects();
-    showFeedback("تم الحفظ بنجاح على هذا الجهاز.", false);
+    showFeedback("تم حفظ المشروع وإعداد مخطط المشاهد والحوار المبدئي باللهجة المصرية. راجع الحوار وعدّله قبل المعاينة الصوتية.", false);
     result.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 
