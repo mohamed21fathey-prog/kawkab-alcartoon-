@@ -17,6 +17,8 @@ jobs:
           node-version: 22
       - name: Check Worker JavaScript syntax
         run: node --check backend/worker.js
+      - name: Check Pages Functions adapter syntax
+        run: node --check 'functions/api/v1/[[path]].js'
       - name: Validate SQLite/D1 schema and financial guards
         run: python backend/validate_schema.py
       - name: Check password hash helper syntax
