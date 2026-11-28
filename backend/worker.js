@@ -8,7 +8,12 @@ const MAX_BODY_BYTES = 16 * 1024;
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 
 function json(data, status = 200, extra = {}) {
-  return new Response(JSON.stringify(data), { status, headers: { ...JSON_HEADERS, ...extra } });
+  const headers = new Headers(JSON_HEADERS);
+  for (const [key, value] of Object.entries(extra)) {
+    if (key.toLowerCase() === "set-cookie" && Array.isArray(value)) value.forEach((item) => headers.append("set-cookie", item));
+    else headers.set(key, value);
+  }
+  return new Response(JSON.stringify(data), { status, headers });
 }
 function randomToken(bytes = 32) {
   const data = crypto.getRandomValues(new Uint8Array(bytes));
@@ -107,6 +112,7 @@ async function handle(request, env) {
   if (path === "/api/v1/auth/login" && method === "POST") {
     let body;
     try { body = await bodyJson(request); } catch { return json({ error: "INVALID_BODY" }, 400); }
+    if (!checkOrigin(request, env)) return json({ error: "ORIGIN_NOT_ALLOWED" }, 403);
     if (!validText(body.email, 3, 254) || !validText(body.password, 8, 200)) return json({ error: "INVALID_CREDENTIALS" }, 400);
     const key = await sha256((body.email.trim().toLowerCase() + "|" + (request.headers.get("CF-Connecting-IP") || "unknown")));
     if (!(await rateLimit(env.DB, key))) return json({ error: "TOO_MANY_ATTEMPTS" }, 429);
