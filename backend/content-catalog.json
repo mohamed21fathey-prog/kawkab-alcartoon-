@@ -515,10 +515,10 @@
       "status": "prototype"
     },
     {
-      "slug": "picture-puzzle",
-      "title": "لغز الصورة",
-      "description": "رتب القطع لتكتمل الصورة.",
-      "kind": "picture-puzzle",
+      "slug": "number-pattern",
+      "title": "تحدي الأرقام",
+      "description": "أكمل تسلسل الأرقام واختر الإجابة الصحيحة.",
+      "kind": "number-pattern",
       "status": "prototype"
     },
     {
@@ -526,14 +526,14 @@
       "title": "صيد الحروف",
       "description": "ابحث عن الحرف المطلوب بين مجموعة من الحروف.",
       "kind": "letter-match",
-      "status": "planned"
+      "status": "prototype"
     },
     {
-      "slug": "shape-builder",
-      "title": "ركّب الأشكال",
-      "description": "كوّن صورة بسيطة باستخدام الأشكال الهندسية.",
-      "kind": "shape-puzzle",
-      "status": "planned"
+      "slug": "shape-recognition",
+      "title": "تحدي الأشكال",
+      "description": "تعرّف على الأشكال الهندسية واختر الشكل المطابق.",
+      "kind": "shape-recognition",
+      "status": "prototype"
     }
   ]
 }
