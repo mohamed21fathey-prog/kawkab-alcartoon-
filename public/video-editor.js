@@ -200,7 +200,8 @@ async function loadEngine() {
     const coreBase = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm";
     await ffmpeg.load({
       coreURL: await toBlobURL(coreBase + "/ffmpeg-core.js", "text/javascript"),
-      wasmURL: await toBlobURL(coreBase + "/ffmpeg-core.wasm", "application/wasm")
+      wasmURL: await toBlobURL(coreBase + "/ffmpeg-core.wasm", "application/wasm"),
+      classWorkerURL: await toBlobURL("https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/worker.js", "text/javascript")
     });
     engineReady = true;
     loadButton.textContent = "تم تحميل محرك الدمج";
