@@ -2,7 +2,7 @@
   "version": 1,
   "language": "ar",
   "publicationPolicy": "draft_only",
-  "note": "كتالوج تخطيطي للمحتوى. لا يُنشر تلقائيًا ولا يعني أن المحتوى التفصيلي أو الألعاب كلها منفذة.",
+  "note": "كتالوج تخطيطي من 13 قسمًا، خمسة موضوعات لكل قسم، وثلاث ألعاب أولية ولعبتين مقترحتين. لا يُنشر المحتوى تلقائيًا ولا يعني اكتمال تفاصيل المحتوى أو الألعاب.",
   "sections": [
     {
       "slug": "studio",
@@ -459,28 +459,66 @@
           "status": "draft"
         }
       ]
+    },
+    {
+      "slug": "episode-factory",
+      "title": "مصنع الحلقات",
+      "sortOrder": 13,
+      "status": "draft",
+      "topics": [
+        {
+          "title": "بناء فكرة الحلقة",
+          "summary": "موضوع مقترح يحتاج إعداد المحتوى ومراجعته قبل النشر.",
+          "sortOrder": 1,
+          "status": "draft"
+        },
+        {
+          "title": "كتابة السيناريو",
+          "summary": "موضوع مقترح يحتاج إعداد المحتوى ومراجعته قبل النشر.",
+          "sortOrder": 2,
+          "status": "draft"
+        },
+        {
+          "title": "تثبيت الشخصيات",
+          "summary": "موضوع مقترح يحتاج إعداد المحتوى ومراجعته قبل النشر.",
+          "sortOrder": 3,
+          "status": "draft"
+        },
+        {
+          "title": "تخطيط المشاهد",
+          "summary": "موضوع مقترح يحتاج إعداد المحتوى ومراجعته قبل النشر.",
+          "sortOrder": 4,
+          "status": "draft"
+        },
+        {
+          "title": "مراجعة وتجهيز ملف الحلقة",
+          "summary": "موضوع مقترح يحتاج إعداد المحتوى ومراجعته قبل النشر.",
+          "sortOrder": 5,
+          "status": "draft"
+        }
+      ]
     }
   ],
   "games": [
     {
       "slug": "memory-match",
       "title": "لعبة الذاكرة",
-      "description": "اعثر على الأزواج المتشابهة ودرّب ذاكرتك.",
+      "description": "اقلب البطاقات واعثر على الأزواج المتشابهة.",
       "kind": "memory",
       "status": "prototype"
     },
     {
-      "slug": "color-challenge",
+      "slug": "color-quest",
       "title": "تحدي الألوان",
-      "description": "اختر اللون المطابق للاسم وتعلّم الألوان.",
+      "description": "اختر اللون الصحيح وفق التعليمات.",
       "kind": "color-quiz",
       "status": "prototype"
     },
     {
-      "slug": "number-patterns",
-      "title": "تحدي الأرقام",
-      "description": "أكمل تسلسل الأرقام واختر الإجابة الصحيحة.",
-      "kind": "number-pattern",
+      "slug": "picture-puzzle",
+      "title": "لغز الصورة",
+      "description": "رتب القطع لتكتمل الصورة.",
+      "kind": "picture-puzzle",
       "status": "prototype"
     },
     {
