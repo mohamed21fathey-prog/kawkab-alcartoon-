@@ -38,6 +38,25 @@ const projectName = document.querySelector("#project-name");
 const projectType = document.querySelector("#project-type");
 const projectIdea = document.querySelector("#project-idea");
 const submitButton = ideaForm && ideaForm.querySelector('button[type="submit"]');
+
+const speakProjectButton=document.querySelector("#speak-project-idea");
+if(speakProjectButton){
+  speakProjectButton.addEventListener("click",()=>{
+    const idea=document.querySelector("#project-idea")?.value.trim();
+    const name=document.querySelector("#project-name")?.value.trim();
+    if(!idea){showFeedback("اكتب فكرة المشروع أولًا حتى نستطيع قراءتها بالعربية.",true);return;}
+    if(!("speechSynthesis" in window)){showFeedback("ميزة القراءة الصوتية غير متاحة في هذا المتصفح.",true);return;}
+    window.speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance((name?name+". ":"")+idea);
+    utterance.lang="ar-EG";utterance.rate=.92;utterance.pitch=1;
+    const voices=window.speechSynthesis.getVoices();
+    const voice=voices.find(item=>item.lang.toLowerCase().startsWith("ar-eg"))||voices.find(item=>item.lang.toLowerCase().startsWith("ar"));
+    if(voice)utterance.voice=voice;
+    utterance.onerror=()=>showFeedback("تعذرت معاينة الصوت العربي على هذا الجهاز.",true);
+    window.speechSynthesis.speak(utterance);
+  });
+}
+
 const STORAGE_KEY = "kawkab-cartoon-projects-v1";
 const MAX_PROJECTS = 30;
 const MAX_IMPORT_BYTES = 1024 * 1024;
