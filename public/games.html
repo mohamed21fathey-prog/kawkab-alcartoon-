@@ -30,26 +30,26 @@
   </section>
   <section class="game-shell" aria-label="الألعاب المتاحة">
     <div class="game-tabs" role="tablist" aria-label="اختر لعبة">
-      <button class="game-tab active" type="button" role="tab" aria-selected="true" data-game="memory">🧠 لعبة الذاكرة</button>
-      <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="color">🎨 تحدي الألوان</button>
-      <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="number">🔢 تحدي الأرقام</button>
-      <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="letters">🔤 صيد الحروف</button>
-      <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="shapes">🔺 تحدي الأشكال</button>
+      <button class="game-tab active" id="tab-memory" type="button" role="tab" aria-selected="true" aria-controls="game-memory" tabindex="0" data-game="memory">🧠 لعبة الذاكرة</button>
+      <button class="game-tab" id="tab-color" type="button" role="tab" aria-selected="false" aria-controls="game-color" tabindex="-1" data-game="color">🎨 تحدي الألوان</button>
+      <button class="game-tab" id="tab-number" type="button" role="tab" aria-selected="false" aria-controls="game-number" tabindex="-1" data-game="number">🔢 تحدي الأرقام</button>
+      <button class="game-tab" id="tab-letters" type="button" role="tab" aria-selected="false" aria-controls="game-letters" tabindex="-1" data-game="letters">🔤 صيد الحروف</button>
+      <button class="game-tab" id="tab-shapes" type="button" role="tab" aria-selected="false" aria-controls="game-shapes" tabindex="-1" data-game="shapes">🔺 تحدي الأشكال</button>
     </div>
-    <section class="game-panel active" id="game-memory" role="tabpanel">
+    <section class="game-panel active" id="game-memory" role="tabpanel" aria-labelledby="tab-memory" tabindex="0">
       <div class="game-heading"><div><h2>اعثر على الأزواج المتشابهة</h2><p>اقلب بطاقتين في كل مرة وحاول تذكر أماكن الصور.</p></div><span class="game-score" id="memory-score">الأزواج: ٠ / ٦</span></div>
       <div class="memory-grid" id="memory-grid" aria-label="بطاقات لعبة الذاكرة"></div>
       <p class="game-feedback" id="memory-feedback" aria-live="polite">ابدأ بالضغط على أي بطاقتين.</p>
       <button class="game-restart" id="memory-restart" type="button">ابدأ من جديد</button>
     </section>
-    <section class="game-panel" id="game-color" role="tabpanel" hidden>
+    <section class="game-panel" id="game-color" role="tabpanel" aria-labelledby="tab-color" tabindex="0" hidden>
       <div class="game-heading"><div><h2>هل تعرف اللون الصحيح؟</h2><p>اقرأ اسم اللون ثم اختر البطاقة المطابقة.</p></div><span class="game-score" id="color-score">النقاط: ٠</span></div>
       <div class="color-question" id="color-question">اضغط «سؤال جديد» للبدء.</div>
       <div class="color-options" id="color-options"></div>
       <p class="game-feedback" id="color-feedback" aria-live="polite"></p>
       <button class="game-restart" id="color-next" type="button">سؤال جديد</button>
     </section>
-    <section class="game-panel" id="game-number" role="tabpanel" hidden>
+    <section class="game-panel" id="game-number" role="tabpanel" aria-labelledby="tab-number" tabindex="0" hidden>
       <div class="game-heading"><div><h2>اكتشف الرقم التالي</h2><p>فكّر في ترتيب الأرقام واختر الإجابة الصحيحة.</p></div><span class="game-score" id="number-score">النقاط: ٠</span></div>
       <div class="number-question" id="number-question">٢، ٤، ٦، ؟</div>
       <div class="number-options" id="number-options">
@@ -59,14 +59,14 @@
       <button class="game-restart" id="number-next" type="button">تحدٍّ جديد</button>
     </section>
 
-    <section class="game-panel" id="game-letters" role="tabpanel" hidden>
+    <section class="game-panel" id="game-letters" role="tabpanel" aria-labelledby="tab-letters" tabindex="0" hidden>
       <div class="game-heading"><div><h2>صيد الحروف</h2><p>ابحث عن الحرف المطلوب بين الحروف المعروضة.</p></div><span class="game-score" id="letters-score">النقاط: ٠</span></div>
       <div class="number-question" id="letters-question">اضغط «حروف جديدة» للبدء.</div>
       <div class="number-options" id="letters-options"></div>
       <p class="game-feedback" id="letters-feedback" aria-live="polite">اختر الحرف المطابق.</p>
       <button class="game-restart" id="letters-next" type="button">حروف جديدة</button>
     </section>
-    <section class="game-panel" id="game-shapes" role="tabpanel" hidden>
+    <section class="game-panel" id="game-shapes" role="tabpanel" aria-labelledby="tab-shapes" tabindex="0" hidden>
       <div class="game-heading"><div><h2>تحدي الأشكال</h2><p>تعرّف على الشكل واختر صورته الصحيحة.</p></div><span class="game-score" id="shapes-score">النقاط: ٠</span></div>
       <div class="number-question" id="shapes-question">اضغط «تحدٍّ جديد» للبدء.</div>
       <div class="number-options" id="shapes-options"></div>
