@@ -39,21 +39,14 @@ const projectType = document.querySelector("#project-type");
 const projectIdea = document.querySelector("#project-idea");
 const submitButton = ideaForm && ideaForm.querySelector('button[type="submit"]');
 
-const speakProjectButton=document.querySelector("#speak-project-idea");
-if(speakProjectButton){
-  speakProjectButton.addEventListener("click",()=>{
-    const idea=document.querySelector("#project-idea")?.value.trim();
-    const name=document.querySelector("#project-name")?.value.trim();
-    if(!idea){showFeedback("اكتب فكرة المشروع أولًا حتى نستطيع قراءتها بالعربية.",true);return;}
-    if(!("speechSynthesis" in window)){showFeedback("ميزة القراءة الصوتية غير متاحة في هذا المتصفح.",true);return;}
-    window.speechSynthesis.cancel();
-    const utterance=new SpeechSynthesisUtterance((name?name+". ":"")+idea);
-    utterance.lang="ar-EG";utterance.rate=.92;utterance.pitch=1;
-    const voices=window.speechSynthesis.getVoices();
-    const voice=voices.find(item=>item.lang.toLowerCase().startsWith("ar-eg"))||voices.find(item=>item.lang.toLowerCase().startsWith("ar"));
-    if(voice)utterance.voice=voice;
-    utterance.onerror=()=>showFeedback("تعذرت معاينة الصوت العربي على هذا الجهاز.",true);
-    window.speechSynthesis.speak(utterance);
+const speakProjectButton = document.querySelector("#speak-project-idea");
+if (speakProjectButton) {
+  speakProjectButton.addEventListener("click", () => {
+    const idea = projectIdea?.value.trim();
+    const name = projectName?.value.trim();
+    if (!idea) { showFeedback("اكتب فكرة المشروع أولًا حتى نستطيع قراءتها باللهجة المصرية.", true); return; }
+    const ok = speakEgyptian((name ? name + ". " : "") + idea, (message) => showFeedback(message, true));
+    if (ok) showFeedback("معاينة باللهجة المصرية عند توفر صوت ar-EG على جهازك؛ هذه ليست ملفًا صوتيًا.", false);
   });
 }
 
@@ -192,6 +185,7 @@ function createStoryboard(project) {
       title: scene.title,
       action: scene.action,
       visualPrompt: scene.visualPrompt,
+      ...createEgyptianDialogue(scene, index, project),
       durationSeconds: 12
     }));
     return {
@@ -223,6 +217,7 @@ function createStoryboard(project) {
     title: beat[0],
     action: beat[1] + " تفاصيل مرتبطة بالقصة: " + sceneSentences[index],
     visualPrompt: "Cinematic 3D family animation. " + beat[1] + " Story context: " + premise + ". Keep character appearance consistent across shots, expressive faces, clear staging, polished lighting, no text, no logos, no watermark.",
+    ...createEgyptianDialogue({ title: beat[0], action: beat[1] + " " + sceneSentences[index] }, index, project),
     durationSeconds: 12
   }));
   return {
@@ -233,6 +228,42 @@ function createStoryboard(project) {
     note: "خطة مشاهد نصية محلية قابلة للتعديل؛ لا تحتوي على صور مولدة أو حركة أو ملف فيديو.",
     scenes
   };
+}
+
+function createEgyptianDialogue(scene, index, project) {
+  const title = String(scene.title || "المغامرة").replace(/[.!؟]+$/g, "").trim();
+  const action = String(scene.action || "").replace(/[.!؟]+$/g, "").trim();
+  const shortAction = action.length > 230 ? action.slice(0, 227).replace(/\s+\S*$/, "") + "..." : action;
+  const openings = ["يا جماعة، ركزوا معايا! ","استنوا بس، إيه اللي بيحصل هنا؟ ","بصوا يا أبطال، ","يا نهار أبيض! ","يلا نشوف هنعمل إيه دلوقتي. ","واضح إن الموضوع محتاج شوية شجاعة. ","الحمد لله، بدأنا نلاقي الحل. ","ودي كانت مغامرة مش هنتنسي بسهولة! "];
+  return {
+    speaker: /عمر/.test(project.name + " " + project.idea) ? "عمر" : "الراوي",
+    dialogue: (openings[index % openings.length] + (shortAction || title)).slice(0, 500)
+  };
+}
+
+function getEgyptianVoice() {
+  if (!("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  return voices.find((voice) => /^ar[-_]eg$/i.test(voice.lang)) ||
+    voices.find((voice) => /^ar[-_]/i.test(voice.lang)) ||
+    voices.find((voice) => voice.lang.toLowerCase().startsWith("ar")) || null;
+}
+
+function speakEgyptian(text, onError) {
+  if (!text || !("speechSynthesis" in window)) {
+    if (onError) onError("ميزة القراءة الصوتية غير متاحة في هذا المتصفح.");
+    return false;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "ar-EG";
+  utterance.rate = 0.94;
+  utterance.pitch = 1;
+  const voice = getEgyptianVoice();
+  if (voice) utterance.voice = voice;
+  utterance.onerror = () => { if (onError) onError("تعذرت معاينة الصوت. تحقق من وجود صوت عربي مثبت على جهازك."); };
+  window.speechSynthesis.speak(utterance);
+  return true;
 }
 
 function normalizeStoryboard(storyboard) {
@@ -246,6 +277,7 @@ function normalizeStoryboard(storyboard) {
     title: String(scene.title || ("المشهد " + (index + 1))).slice(0, 120),
     action: String(scene.action || "").slice(0, 2000),
     visualPrompt: String(scene.visualPrompt || scene.prompt || "").slice(0, 3000),
+    speaker: String(scene.speaker || "الراوي").slice(0, 80),
     dialogue: String(scene.dialogue || "").slice(0, 1000),
     durationSeconds: Math.max(1, Math.min(600, Number.parseInt(scene.durationSeconds, 10) || 12))
   }));
@@ -413,6 +445,31 @@ function renderProjects() {
         actionInput.value = scene.action;
         actionLabel.appendChild(actionInput);
 
+        const speakerLabel = document.createElement("label");
+        speakerLabel.textContent = "اسم المتحدث";
+        const speakerInput = document.createElement("input");
+        speakerInput.type = "text";
+        speakerInput.maxLength = 80;
+        speakerInput.value = scene.speaker || "الراوي";
+        speakerLabel.appendChild(speakerInput);
+
+        const dialogueLabel = document.createElement("label");
+        dialogueLabel.textContent = "الحوار باللهجة المصرية";
+        const dialogueInput = document.createElement("textarea");
+        dialogueInput.rows = 3;
+        dialogueInput.maxLength = 1000;
+        dialogueInput.value = scene.dialogue || "";
+        dialogueLabel.appendChild(dialogueInput);
+
+        const listenDialogueButton = document.createElement("button");
+        listenDialogueButton.type = "button";
+        listenDialogueButton.className = "mini-action";
+        listenDialogueButton.textContent = "🔊 استمع للحوار المصري";
+        listenDialogueButton.addEventListener("click", () => {
+          if (!dialogueInput.value.trim()) { showFeedback("اكتب الحوار أولًا.", true); return; }
+          speakEgyptian(dialogueInput.value.trim(), (message) => showFeedback(message, true));
+        });
+
         const visualLabel = document.createElement("label");
         visualLabel.textContent = "الوصف البصري (بالإنجليزية)";
         const visualInput = document.createElement("textarea");
@@ -431,9 +488,9 @@ function renderProjects() {
         durationInput.value = String(scene.durationSeconds);
         durationLabel.appendChild(durationInput);
 
-        sceneCard.append(heading, titleLabel, actionLabel, visualLabel, durationLabel);
+        sceneCard.append(heading, titleLabel, actionLabel, speakerLabel, dialogueLabel, listenDialogueButton, visualLabel, durationLabel);
         scenePanel.appendChild(sceneCard);
-        fields.push({ scene, titleInput, actionInput, visualInput, durationInput });
+        fields.push({ scene, titleInput, actionInput, speakerInput, dialogueInput, visualInput, durationInput });
       });
 
       const saveScenesButton = document.createElement("button");
@@ -453,6 +510,8 @@ function renderProjects() {
           field.scene.number = index + 1;
           field.scene.title = field.titleInput.value.trim();
           field.scene.action = field.actionInput.value.trim();
+          field.scene.speaker = field.speakerInput.value.trim() || "الراوي";
+          field.scene.dialogue = field.dialogueInput.value.trim();
           field.scene.visualPrompt = field.visualInput.value.trim();
           field.scene.durationSeconds = Number.parseInt(field.durationInput.value, 10);
         });
