@@ -4,7 +4,7 @@
  */
 const SESSION_DAYS = 7;
 const PBKDF2_ITERATIONS = 310000;
-const MAX_BODY_BYTES = 16 * 1024;
+const MAX_BODY_BYTES = 128 * 1024;
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 
 function json(data, status = 200, extra = {}) {
@@ -152,16 +152,41 @@ async function handle(request, env) {
     }
     if (!checkOrigin(request, env) || !csrfValid(request)) return json({ error: "CSRF_ORIGIN_CHECK_FAILED" }, 403);
     let body; try { body = await bodyJson(request); } catch { return json({ error: "INVALID_BODY" }, 400); }
-    if (!validText(body.title, 1, 120) || !validText(body.projectType, 1, 60) || !validText(body.idea, 1, 10000)) return json({ error: "INVALID_PROJECT" }, 400);
+    if (!body || typeof body !== "object" || Array.isArray(body)
+      || !validText(body.title, 1, 120)
+      || !validText(body.projectType, 1, 60)
+      || !validText(body.idea, 1, 10000)) return json({ error: "INVALID_PROJECT" }, 400);
     const id = crypto.randomUUID();
-    const storyboard = body.storyboard == null ? null : JSON.stringify(body.storyboard);
-    if (storyboard && storyboard.length > 100000) return json({ error: "STORYBOARD_TOO_LARGE" }, 413);
+    let storyboard = null;
+    try { storyboard = body.storyboard == null ? null : JSON.stringify(body.storyboard); }
+    catch { return json({ error: "INVALID_STORYBOARD" }, 400); }
+    if (storyboard && new TextEncoder().encode(storyboard).length > 100000) return json({ error: "STORYBOARD_TOO_LARGE" }, 413);
     await env.DB.prepare("INSERT INTO projects (id,user_id,title,project_type,idea,storyboard_json) VALUES (?,?,?,?,?,?)")
       .bind(id, user.id, body.title.trim(), body.projectType, body.idea.trim(), storyboard).run();
     return json({ project: { id, title: body.title.trim(), projectType: body.projectType, status: "draft" } }, 201);
   }
 
   const projectMatch = path.match(/^\/api\/v1\/projects\/([0-9a-f-]{36})$/i);
+  const projectMatch = path.match(/^\\/api\\/v1\\/projects\\/([0-9a-f-]{36})$/i);
+  if (projectMatch && method === "PUT") {
+    const user = await requireAuth(request, env);
+    if (!user) return json({ error: "UNAUTHENTICATED" }, 401);
+    if (!checkOrigin(request, env) || !csrfValid(request)) return json({ error: "CSRF_ORIGIN_CHECK_FAILED" }, 403);
+    let body; try { body = await bodyJson(request); } catch { return json({ error: "INVALID_BODY" }, 400); }
+    if (!body || typeof body !== "object" || Array.isArray(body)
+      || !validText(body.title, 1, 120)
+      || !validText(body.projectType, 1, 60)
+      || !validText(body.idea, 1, 10000)) return json({ error: "INVALID_PROJECT" }, 400);
+    let storyboard = null;
+    try { storyboard = body.storyboard == null ? null : JSON.stringify(body.storyboard); }
+    catch { return json({ error: "INVALID_STORYBOARD" }, 400); }
+    if (storyboard && new TextEncoder().encode(storyboard).length > 100000) return json({ error: "STORYBOARD_TOO_LARGE" }, 413);
+    const now = new Date().toISOString();
+    const result = await env.DB.prepare("UPDATE projects SET title=?, project_type=?, idea=?, storyboard_json=?, updated_at=? WHERE id=? AND user_id=?")
+      .bind(body.title.trim(), body.projectType.trim(), body.idea.trim(), storyboard, now, projectMatch[1], user.id).run();
+    if (!result.meta?.changes) return json({ error: "PROJECT_NOT_FOUND" }, 404);
+    return json({ updated: true, project: { id: projectMatch[1], title: body.title.trim(), projectType: body.projectType.trim(), status: "draft" } });
+  }
   if (projectMatch && method === "DELETE") {
     const user = await requireAuth(request, env);
     if (!user) return json({ error: "UNAUTHENTICATED" }, 401);
