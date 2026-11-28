@@ -5,7 +5,7 @@ This folder is the **design and database foundation**, not a deployed backend.
 ## Current status
 - The public site is still a static frontend. Existing local drafts remain browser-local.
 - `schema.sql` defines the initial SQLite schema intended to be compatible with Cloudflare D1.
-- `content-catalog.json` contains 12 Arabic sections with five draft topic ideas each, plus a five-game roadmap. Draft entries are not published automatically.
+- `content-catalog.json` contains 13 Arabic sections with five draft topic ideas each, plus a five-game roadmap. Draft entries are not published automatically.
 - No database, authentication provider, file bucket, payment gateway, video-generation provider, or background agent has been connected.
 - No API keys, paid services, or KIE.ai integration are included.
 
