@@ -31,5 +31,10 @@ This folder is the **design and database foundation**, not a deployed backend.
 ## Not implemented yet
 Authentication endpoints, email delivery, admin UI/API, object storage, payment evidence upload, wallet operations, moderation scanners, analytics collection, customer-support bot, video generation, rendering, and background jobs. The catalogue is editorial planning data only; detailed lessons, stories, and worksheets still need full editorial content and review. The five browser games are prototypes and need cross-device play testing before publication.
 
+## Database consistency and financial safeguards
+- `backend/schema.sql` is the canonical schema; `migrations/0001_initial.sql` is kept byte-for-byte identical and checked in CI. This initial migration was aligned before any live database was connected; do not apply it to an existing database without a reviewed migration plan.
+- Wallet transactions cannot be deleted or have their amount, owner, direction, type, or idempotency key rewritten. A pending transaction may only move once to an approved/rejected/cancelled state.
+- A payment request cannot be marked approved unless it references an already-approved credit top-up for the same user. The application must perform the top-up and payment review in one database transaction and write an audit record.
+
 ## Deployment gate
 Do not deploy or connect a live D1 database until the owner approves the provider, checks the account's free-tier terms/quotas, and supplies the required account-side setup. Do not add paid services or secrets without explicit approval.
