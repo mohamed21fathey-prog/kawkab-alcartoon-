@@ -237,7 +237,7 @@ function createEgyptianDialogue(scene, index, project) {
   const shortAction = action.length > 230 ? action.slice(0, 227).replace(/\s+\S*$/, "") + "..." : action;
   const openings = ["يا جماعة، ركزوا معايا! ","استنوا بس، إيه اللي بيحصل هنا؟ ","بصوا يا أبطال، ","يا نهار أبيض! ","يلا نشوف هنعمل إيه دلوقتي. ","واضح إن الموضوع محتاج شوية شجاعة. ","الحمد لله، بدأنا نلاقي الحل. ","ودي كانت مغامرة مش هنتنسي بسهولة! "];
   return {
-    speaker: /عمر/.test(project.name + " " + project.idea) ? "عمر" : "الراوي",
+    speaker: "الراوي",
     dialogue: (openings[index % openings.length] + (shortAction || title)).slice(0, 500)
   };
 }
@@ -494,6 +494,20 @@ function renderProjects() {
         fields.push({ scene, titleInput, actionInput, speakerInput, dialogueInput, visualInput, durationInput });
       });
 
+      const playAllDialogueButton = document.createElement("button");
+      playAllDialogueButton.type = "button";
+      playAllDialogueButton.className = "mini-action";
+      playAllDialogueButton.textContent = "▶ استمع إلى الحوار بالكامل";
+      playAllDialogueButton.addEventListener("click", () => {
+        const script = fields.map((field) => {
+          const speaker = field.speakerInput.value.trim() || "الراوي";
+          const line = field.dialogueInput.value.trim();
+          return line ? speaker + ": " + line : "";
+        }).filter(Boolean).join(". ");
+        if (!script) { showFeedback("أضف حوارًا للمشاهد أولًا.", true); return; }
+        speakEgyptian(script, (message) => showFeedback(message, true));
+      });
+
       const saveScenesButton = document.createElement("button");
       saveScenesButton.type = "button";
       saveScenesButton.className = "mini-action storyboard-action";
@@ -525,7 +539,7 @@ function renderProjects() {
         renderProjects();
         showFeedback("تم حفظ تعديلات المشاهد والمدة الإجمالية محليًا.", false);
       });
-      scenePanel.appendChild(saveScenesButton);
+      scenePanel.append(playAllDialogueButton, saveScenesButton);
       card.appendChild(scenePanel);
     }
 
