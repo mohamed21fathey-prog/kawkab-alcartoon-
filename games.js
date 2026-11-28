@@ -115,8 +115,8 @@ function nextLetters(){
     const button=document.createElement("button");button.type="button";button.textContent=letter;
     button.setAttribute("aria-label","الحرف "+letter);
     button.addEventListener("click",()=>{
-      if(letter===lettersAnswer){lettersPoints++;document.querySelector("#letters-feedback").textContent="أحسنت! هذا هو الحرف الصحيح.";}
-      else{document.querySelector("#letters-feedback").textContent="محاولة رائعة! الحرف المطلوب هو "+lettersAnswer+".";}
+      if(letter===lettersAnswer){lettersPoints++;document.querySelector("#letters-feedback").textContent="أحسنت! هذا هو الحرف الصحيح.";playEffect("success");}
+      else{document.querySelector("#letters-feedback").textContent="محاولة رائعة! الحرف المطلوب هو "+lettersAnswer+".";playEffect("error");}
       document.querySelector("#letters-score").textContent="النقاط: "+new Intl.NumberFormat("ar-EG").format(lettersPoints);
       holder.querySelectorAll("button").forEach(b=>b.disabled=true);
     });holder.append(button);
@@ -138,8 +138,8 @@ function nextShapes(){
     button.textContent=shape.symbol;button.setAttribute("aria-label",shape.name);
     button.style.fontSize="32px";
     button.addEventListener("click",()=>{
-      if(shape===shapesAnswer){shapesPoints++;document.querySelector("#shapes-feedback").textContent="ممتاز! تعرفت على الشكل الصحيح.";}
-      else{document.querySelector("#shapes-feedback").textContent="حاول مرة أخرى في الجولة القادمة. الشكل هو "+shapesAnswer.name+".";}
+      if(shape===shapesAnswer){shapesPoints++;document.querySelector("#shapes-feedback").textContent="ممتاز! تعرفت على الشكل الصحيح.";playEffect("success");}
+      else{document.querySelector("#shapes-feedback").textContent="حاول مرة أخرى في الجولة القادمة. الشكل هو "+shapesAnswer.name+".";playEffect("error");}
       document.querySelector("#shapes-score").textContent="النقاط: "+new Intl.NumberFormat("ar-EG").format(shapesPoints);
       holder.querySelectorAll("button").forEach(b=>b.disabled=true);
     });holder.append(button);
