@@ -76,7 +76,7 @@ required_ids = {
                    "speak-project-idea"},
     "video-editor.html": {"video-files", "clip-list", "load-engine",
                           "merge-videos", "editor-status", "download-merged"},
-    "games.html": {"memory-game", "color-game", "number-game"},
+    "games.html": {"game-memory", "game-color", "game-number"},
 }
 for relative, expected in required_ids.items():
     page = ROOT / relative
