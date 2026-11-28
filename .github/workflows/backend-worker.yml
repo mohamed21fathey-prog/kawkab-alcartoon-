@@ -1,0 +1,25 @@
+name: Backend worker checks
+on:
+  push:
+    branches: [feature/kawkab-backend-foundation]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check Worker JavaScript syntax
+        run: node --check backend/worker.js
+      - name: Check Pages Functions adapter syntax
+        run: node --check 'functions/api/v1/[[path]].js'
+      - name: Validate SQLite/D1 schema and financial guards
+        run: python backend/validate_schema.py
+      - name: Check password hash helper syntax
+        run: python -m py_compile backend/hash_password.py

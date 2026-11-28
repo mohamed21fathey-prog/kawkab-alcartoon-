@@ -23,7 +23,7 @@ required = {
     "users", "sessions", "projects", "assets", "wallet_transactions",
     "payment_requests", "moderation_items", "audit_logs",
     "analytics_sessions", "analytics_events", "support_tickets",
-    "support_messages", "content_sections", "section_topics", "mini_games",
+    "support_messages", "content_sections", "section_topics", "mini_games", "auth_rate_limits",
 }
 actual = {row[0] for row in db.execute(
     "SELECT name FROM sqlite_master WHERE type='table'"

@@ -1,40 +1,51 @@
 # Kawkab Al Cartoon backend foundation
 
-This folder is the **design and database foundation**, not a deployed backend.
+This is source code for a proposed Cloudflare Workers + D1 backend. It is **not deployed** and is not connected to a live database.
 
-## Current status
-- The public site is still a static frontend. Existing local drafts remain browser-local.
-- `schema.sql` defines the initial SQLite schema intended to be compatible with Cloudflare D1.
-- `content-catalog.json` contains 13 Arabic sections with five draft topic ideas each, plus five browser mini-games. The games are local prototypes; catalogue content remains draft-only.
-- No database, authentication provider, file bucket, payment gateway, video-generation provider, or background agent has been connected.
-- No API keys, paid services, or KIE.ai integration are included.
+## Implemented in this branch
+- `backend/worker.js`: API health check, login, session inspection/logout, private project listing/creation/update/deletion, and admin identity check.
+- PBKDF2-SHA-256 password verification; random session tokens are stored only as SHA-256 hashes.
+- Secure, HttpOnly, SameSite=Strict session cookies; CSRF token and exact-origin checks for state-changing requests.
+- Login throttling backed by hashed account/IP identifiers in D1.
+- Project queries and updates/deletions are always scoped to the authenticated user; `PUT /api/v1/projects/:id` updates an owned project only.
+- JSON request bodies are capped at 128 KiB; storyboard JSON has a separate 100 KiB UTF-8 limit.
+- Public registration is intentionally disabled (503) until email verification and abuse controls are implemented.
+- `backend/hash_password.py` creates a password hash for a manually provisioned first administrator. It never sends the password anywhere.
+- `wrangler.toml` is a template with a deliberately invalid D1 database ID placeholder.
 
-## Planned free-first architecture
-1. Cloudflare Pages for static hosting, only after confirming the account's plan is suitable for the intended commercial use.
-2. Cloudflare Workers / Pages Functions for server-side endpoints.
-3. Cloudflare D1 for relational data, subject to free-plan quotas.
-4. File storage only after checking the free quota and access-control model; private customer uploads must never be public by default.
-5. A trusted authentication implementation with email verification, secure password hashing, rate limits, session rotation, CSRF protection where applicable, and server-side role checks.
-6. Manual payment review for Vodafone Cash / InstaPay. A screenshot is evidence for human review, not automatic proof of payment.
-7. Moderation queue for text and media. Automated checks are not a 100% guarantee; high-risk items must be held for review.
-8. Analytics based on real sessions/events with minimal data collection and a consent choice.
+## Not implemented / not live
+- No Cloudflare account access, D1 database, Worker deployment, secrets, or R2 bucket has been created.
+- No admin account exists until the owner provisions one securely.
+- No email/SMS delivery, public signup, password reset, payments, wallet crediting, uploads, video generation, TTS, or admin dashboard UI.
+- No paid APIs or KIE.ai integration.
 
-## Data rules
-- Never store plaintext passwords or raw session tokens.
-- Never trust a role, wallet balance, payment approval, or moderation result supplied by the browser.
-- Credit balances must be derived from approved ledger entries; all balance changes must be server-side and audited.
-- Keep uploaded assets private until approved and explicitly published.
-- Do not store raw IP addresses in analytics tables.
-- Do not collect children's personal data for browser mini-games.
-- Admin actions must be authorized on the server and written to `audit_logs`.
+## Before deployment
+1. Confirm the current Cloudflare Workers and D1 free-plan quotas and commercial-use terms in the owner's account.
+2. Create a new D1 database named `kawkab-alcartoon-db` in Cloudflare.
+3. Put the real database ID in `wrangler.toml`; never commit API tokens or passwords.
+4. Set `ALLOWED_ORIGIN` to the exact production site origin.
+5. Apply the canonical schema to the new empty database only. `migrations/0001_initial.sql` must remain byte-for-byte identical to `backend/schema.sql`.
+6. Provision the first admin manually using a securely generated password hash. Do not create an admin through a public endpoint.
+7. Deploy a preview Worker first; test health, auth, CSRF, account isolation, expiry, throttling, and error handling.
+8. Only after passing tests, connect the frontend and enable customer-facing features.
 
-## Not implemented yet
-Authentication endpoints, email delivery, admin UI/API, object storage, payment evidence upload, wallet operations, moderation scanners, analytics collection, customer-support bot, video generation, rendering, and background jobs. The catalogue is editorial planning data only; detailed lessons, stories, and worksheets still need full editorial content and review. The five browser games are prototypes and need cross-device play testing before publication.
+Example commands, to be run by the owner only after reviewing the account plan and database ID:
 
-## Database consistency and financial safeguards
-- `backend/schema.sql` is the canonical schema; `migrations/0001_initial.sql` is kept byte-for-byte identical and checked in CI. This initial migration was aligned before any live database was connected; do not apply it to an existing database without a reviewed migration plan.
-- Wallet transactions cannot be deleted or have their amount, owner, direction, type, or idempotency key rewritten. A pending transaction may only move once to an approved/rejected/cancelled state.
-- A payment request cannot be marked approved unless it references an already-approved credit top-up for the same user. The application must perform the top-up and payment review in one database transaction and write an audit record.
+```sh
+npx wrangler d1 execute kawkab-alcartoon-db --remote --file=backend/schema.sql
+npx wrangler deploy
+```
 
-## Deployment gate
-Do not deploy or connect a live D1 database until the owner approves the provider, checks the account's free-tier terms/quotas, and supplies the required account-side setup. Do not add paid services or secrets without explicit approval.
+Do not run these commands against an existing database without a reviewed migration plan. Do not put Cloudflare API tokens in GitHub files or chat.
+
+## Password hash generation
+Run locally in a trusted terminal:
+
+```sh
+python backend/hash_password.py
+```
+
+The script prompts for a password and prints a PBKDF2-SHA-256 hash in the format expected by the Worker. Keep the output private and use it only in a manual D1 admin provisioning step. Never commit the hash to the repository.
+
+## Free-first limits
+The API uses D1 for persistence. Free-tier quotas, commercial-use terms, and request limits can change and must be confirmed in the Cloudflare account before deployment. This source code alone does not create a live service or guarantee free operation at every traffic level.
