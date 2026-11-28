@@ -124,6 +124,67 @@ function createStoryboard(project) {
   const idea = project.idea.trim();
   const sentences = idea.split(/[.!?؟؛؛\\n]+/).map((part) => part.trim()).filter(Boolean);
   const premise = sentences.join("، ") || idea;
+
+  if (/مغامرة\\s*في\\s*(أعماق\\s*)?المحيط/.test(project.name)) {
+    const oceanScenes = [
+      {
+        title: "صدمة في قلب المحيط",
+        action: "يبدأ المشهد بلقطة قريبة لعمر داخل مركبة غوص صغيرة وهو يهبط لاستكشاف عالم جديد. فجأة يهتز الماء بعنف، وتنطفئ أضواء المركبة للحظة، ثم يظهر وميض أزرق هائل خلف جدار من الشعاب المرجانية ويمر ظل ضخم بسرعة أمام النافذة. يعود الضوء وتظهر على الزجاج خدوش غامضة؛ يدرك عمر أن شيئًا مجهولًا يراقبه.",
+        visualPrompt: "Cinematic 3D family adventure animation, 16:9. Inside a compact modern underwater exploration pod, Omar, a curious young boy, descends into the deep blue ocean. A sudden powerful underwater shock shakes the pod, lights flicker, a mysterious enormous shadow rushes past the glass behind glowing coral reefs, and an eerie blue light flashes in the abyss. Omar reacts with wide amazed eyes. Dynamic camera push-in, suspenseful but family-friendly, detailed bubbles and volumetric underwater lighting. Keep Omar's face, hair and outfit consistent in every shot. No text, no logos, no watermark."
+      },
+      {
+        title: "قرار النزول إلى العالم الجديد",
+        action: "بعد أن يستعيد عمر هدوءه، يراجع أجهزة الغوص ويقرر مواصلة النزول بدل العودة. يتحدث بحماس عن رغبته في اكتشاف أسرار المحيط، ويشغّل مصابيح المركبة.",
+        visualPrompt: "Wide cinematic 3D shot of Omar confidently checking the controls of his small underwater exploration pod and choosing to continue descending into the vast deep ocean. Sun rays fade above, schools of tiny fish pass outside, adventurous family-film mood, consistent character design, no text, no logos, no watermark."
+      },
+      {
+        title: "مدينة الشعاب المرجانية",
+        action: "يصل عمر إلى منطقة واسعة من الشعاب المرجانية الملونة، ويرى أسماكًا مضيئة وكائنات بحرية لم يشاهدها من قبل. ينسى خوفه للحظات وينشغل بتسجيل الاكتشافات.",
+        visualPrompt: "Breathtaking colorful coral reef city deep underwater, luminous fish, graceful sea turtles and unusual harmless marine creatures surrounding Omar's exploration pod. Wonder-filled cinematic 3D family animation, rich blue and turquoise light, consistent Omar design, no text, no logos, no watermark."
+      },
+      {
+        title: "إشارة الاستغاثة",
+        action: "يلتقط جهاز عمر إشارة متقطعة قادمة من شق عميق بين الصخور. تتكرر الإشارة ثلاث مرات، ثم يسمع عمر صوت ارتطام مكتومًا من الأعماق.",
+        visualPrompt: "Close-up of a sonar screen glowing with a mysterious repeating signal as Omar listens carefully inside the underwater pod; outside, a narrow dark canyon splits the coral reef. Suspenseful cinematic 3D lighting, readable visual storytelling without on-screen text, consistent character design, no logos, no watermark."
+      },
+      {
+        title: "الطريق المحاصر",
+        action: "يتبع عمر الإشارة، لكن تيارًا بحريًا قويًا يدفع المركبة نحو ممر ضيق تسقط منه الصخور الصغيرة. عليه أن يقود بحذر حتى لا تعلق المركبة.",
+        visualPrompt: "Dynamic underwater action shot: a strong ocean current pushes Omar's small exploration pod toward a narrow rocky passage as small stones tumble around it. Omar carefully steers between the rocks. Exciting but safe family adventure, cinematic 3D animation, no text, no logos, no watermark."
+      },
+      {
+        title: "صاحب الظل الغامض",
+        action: "يظهر الكائن الذي كان يراقب عمر، لكنه ليس وحشًا؛ إنه سلحفاة بحرية ضخمة عالقة بخيط صيد قديم قرب الصخور. يفهم عمر سبب الإشارات ويحاول مساعدتها.",
+        visualPrompt: "A majestic large sea turtle appears from the blue darkness, gently struggling with an old discarded fishing line caught near a rocky coral ledge. Omar sees the truth and reacts with empathy. Beautiful expressive cinematic 3D family animation, no injury or frightening imagery, no text, no logos, no watermark."
+      },
+      {
+        title: "إنقاذ السلحفاة",
+        action: "يستخدم عمر ذراع المركبة الآلية وأداة آمنة لقطع الخيط العالق دون إيذاء السلحفاة. وبعد محاولات دقيقة تتحرر وتسبح حول المركبة في امتنان.",
+        visualPrompt: "Omar carefully uses the safe robotic arm of his underwater pod to free a giant sea turtle from discarded fishing line without harming it. The turtle swims freely around the pod as bubbles rise and soft sunbeams illuminate the scene. Heartwarming cinematic 3D family animation, consistent character design, no text, no logos, no watermark."
+      },
+      {
+        title: "سر جديد في الأعماق",
+        action: "قبل أن يعود عمر، تقوده السلحفاة إلى كهف بحري تخرج منه أضواء زرقاء جميلة. يلمح في الداخل ممرًا واسعًا مليئًا بآثار عالم قديم، فيقرر تسجيل الموقع والعودة لاستكشافه في مغامرة قادمة.",
+        visualPrompt: "Final wide cinematic 3D shot of Omar's exploration pod following the freed sea turtle toward a mysterious underwater cave glowing with blue bioluminescent light. Ancient natural formations and a vast hidden passage are revealed in the distance. Wonder, discovery and a sequel hook, family-friendly, consistent Omar design, no text, no logos, no watermark."
+      }
+    ];
+    const scenes = oceanScenes.map((scene, index) => ({
+      number: index + 1,
+      title: scene.title,
+      action: scene.action,
+      visualPrompt: scene.visualPrompt,
+      durationSeconds: 12
+    }));
+    return {
+      version: 2,
+      generatedAt: new Date().toISOString(),
+      format: "16:9",
+      totalDurationSeconds: 96,
+      note: "خطة مشاهد نصية مخصصة لقصة مغامرة في المحيط؛ لا تحتوي على صور مولدة أو حركة أو ملف فيديو.",
+      scenes
+    };
+  }
+
   const beats = [
     ["الافتتاح والخطاف", "افتح بلحظة مفاجئة تلفت الانتباه وتلمّح إلى التحدي الأساسي."],
     ["التعرّف على البطل والعالم", "عرّف المشاهد بالشخصية الرئيسية والمكان الذي تدور فيه المغامرة."],
