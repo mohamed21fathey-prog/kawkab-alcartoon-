@@ -4,7 +4,33 @@ const nav=document.querySelector("#nav");
 if(toggle&&nav){toggle.addEventListener("click",()=>{const open=nav.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));});}
 const tabs=[...document.querySelectorAll(".game-tab")];
 const panels=[...document.querySelectorAll(".game-panel")];
-tabs.forEach(tab=>tab.addEventListener("click",()=>{tabs.forEach(t=>{const active=t===tab;t.classList.toggle("active",active);t.setAttribute("aria-selected",String(active));});panels.forEach(panel=>{const active=panel.id==="game-"+tab.dataset.game;panel.hidden=!active;panel.classList.toggle("active",active);});}));
+function activateTab(tab,moveFocus=false){
+  tabs.forEach(item=>{
+    const active=item===tab;
+    item.classList.toggle("active",active);
+    item.setAttribute("aria-selected",String(active));
+    item.tabIndex=active?0:-1;
+  });
+  panels.forEach(panel=>{
+    const active=panel.id==="game-"+tab.dataset.game;
+    panel.hidden=!active;
+    panel.classList.toggle("active",active);
+  });
+  if(moveFocus)tab.focus();
+}
+tabs.forEach((tab,index)=>{
+  tab.addEventListener("click",()=>activateTab(tab));
+  tab.addEventListener("keydown",event=>{
+    let next=index;
+    if(event.key==="ArrowRight")next=(index+1)%tabs.length;
+    else if(event.key==="ArrowLeft")next=(index-1+tabs.length)%tabs.length;
+    else if(event.key==="Home")next=0;
+    else if(event.key==="End")next=tabs.length-1;
+    else return;
+    event.preventDefault();
+    activateTab(tabs[next],true);
+  });
+});
 
 const symbols=["🐳","🦋","🌈","🚀","🐢","⭐"];
 const memoryGrid=document.querySelector("#memory-grid");
