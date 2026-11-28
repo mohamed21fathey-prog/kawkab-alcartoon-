@@ -28,3 +28,7 @@
 اختبر الفرع أولًا على معاينة منفصلة. لا تدمج هذا الفرع إلى `main` ولا تغيّر إعدادات النشر قبل مراجعة النسخة والموافقة عليها.
 - إعداد مخطط محلي من 8 مشاهد لكل مشروع محفوظ، مع وصف مرتبط بملخص الفكرة ومدة قابلة للتعديل، وإمكانية تعديل المشاهد وحفظها وتصدير خطة الإنتاج بصيغة JSON. يتم ترحيل المخططات القديمة تلقائيًا إلى البنية الجديدة عند قراءتها.
 - مخطط المشاهد لا يولّد صورًا أو حركة أو فيديو؛ إنه ملف تجهيز يمكن استخدامه لاحقًا مع محرك إنتاج يتم اختياره واعتماده صراحةً.
+
+
+## Backend foundation (not deployed)
+An initial Cloudflare D1-compatible schema and unpublished Arabic topic catalogue are available in `backend/`. These files are a preparation step only: no database, authentication, uploads, payments, analytics, moderation service, or video-generation engine is connected yet. Review `backend/README.md` before any deployment. All live-service setup remains gated on explicit owner approval and a verified free plan.
