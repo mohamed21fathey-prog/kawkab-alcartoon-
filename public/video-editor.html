@@ -26,7 +26,7 @@
   <section class="editor-notice" role="note">
     <strong>قبل البدء</strong>
     <p>محرك الدمج يُحمّل عند طلبك فقط من مكتبات مفتوحة المصدر مستضافة على jsDelivr. قد يصل حجم المحرك الأولي إلى نحو 31 ميجابايت، بخلاف ملفات المكتبة، وتحتاج المعالجة إلى ذاكرة ومساحة كافيتين. استخدم اتصالًا مستقرًا، ويفضّل تجربة مقاطع قصيرة أولًا.</p>
-    <p>الإصدار الأول يخرج MP4 بدقة 720p مع صوت المقاطع الأصلية، ويضيف صمتًا للمقطع الذي لا يحتوي على صوت. لا يوجد رفع أو خصم رصيد.</p>
+    <p>الإصدار الأول يخرج MP4 بدقة 720p مع صوت المقاطع الأصلية. يمكنك إضافة تعليق صوتي مسجل مسبقًا (MP3 أو WAV أو M4A أو OGG) ليُمزج مع صوت الفيديو. لا يوجد رفع أو خصم رصيد.</p>
   </section>
   <section class="editor-panel">
     <div class="editor-panel-head"><div><span class="step-number">01</span><h2>أضف المقاطع</h2></div><span class="editor-muted">حتى 5 مقاطع — 60 ميجابايت إجمالًا</span></div>
@@ -35,13 +35,20 @@
     <div id="file-summary" class="file-summary" aria-live="polite">لم تتم إضافة مقاطع بعد.</div>
     <ol id="clip-list" class="clip-list" aria-label="ترتيب مقاطع الفيديو"></ol>
   </section>
+  <section class="editor-panel voiceover-panel">
+    <div class="editor-panel-head"><div><span class="step-number">03</span><h2>التعليق الصوتي العربي (اختياري)</h2></div><span class="editor-muted">حتى 20 ميجابايت</span></div>
+    <p class="editor-muted">سجّل تعليقك بالعربية باستخدام مسجل الهاتف أو الكمبيوتر، ثم اختر الملف هنا. سيُمزج التعليق مع صوت المقاطع عند التصدير، ويُقص أو يُمدد بالصمت ليتوافق مع مدة الفيديو.</p>
+    <label class="file-picker" for="voiceover-file"><span aria-hidden="true">🎙️</span><strong>اختر ملف التعليق الصوتي</strong><small>MP3 أو WAV أو M4A أو AAC أو OGG أو WebM</small></label>
+    <input id="voiceover-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.opus,.webm,.flac" hidden>
+    <p id="voiceover-status" class="editor-status" role="status" aria-live="polite">لم يتم اختيار تعليق صوتي.</p>
+  </section>
   <section class="editor-panel">
     <div class="editor-panel-head"><div><span class="step-number">02</span><h2>المعاينة</h2></div><span class="editor-muted">معاينة مقطع واحد في كل مرة</span></div>
     <video id="clip-preview" class="clip-preview" controls playsinline preload="metadata"></video>
     <p id="preview-caption" class="editor-muted">اختر مقطعًا من القائمة لمعاينته.</p>
   </section>
   <section class="editor-panel export-panel">
-    <div class="editor-panel-head"><div><span class="step-number">03</span><h2>إنشاء الفيديو النهائي</h2></div><span class="editor-muted">MP4 • 720p • 30 إطار/ث</span></div>
+    <div class="editor-panel-head"><div><span class="step-number">04</span><h2>إنشاء الفيديو النهائي</h2></div><span class="editor-muted">MP4 • 720p • 30 إطار/ث</span></div>
     <div class="editor-actions">
       <button id="load-engine" class="btn secondary" type="button">تحميل محرك الدمج المجاني</button>
       <button id="merge-videos" class="btn primary" type="button" disabled>ابدأ دمج المقاطع</button>
