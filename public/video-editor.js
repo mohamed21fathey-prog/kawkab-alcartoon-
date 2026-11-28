@@ -15,8 +15,8 @@ const mergedPreview = document.querySelector("#merged-preview");
 const downloadLink = document.querySelector("#download-merged");
 
 const MAX_FILES = 5;
-const MAX_TOTAL_BYTES = 150 * 1024 * 1024;
-const MAX_FILE_BYTES = 100 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 60 * 1024 * 1024;
+const MAX_FILE_BYTES = 40 * 1024 * 1024;
 const clips = [];
 let ffmpeg = null;
 let engineReady = false;
@@ -39,7 +39,7 @@ function revokeClip(clip) {
 function updateSummary() {
   const total = clips.reduce((sum, clip) => sum + clip.file.size, 0);
   summary.textContent = clips.length
-    ? clips.length + " مقاطع • " + formatBytes(total) + " من 150 ميجابايت"
+    ? clips.length + " مقاطع • " + formatBytes(total) + " من 60 ميجابايت"
     : "لم تتم إضافة مقاطع بعد.";
   mergeButton.disabled = !engineReady || clips.length < 2 || busy;
 }
@@ -142,11 +142,11 @@ input.addEventListener("change", async () => {
       break;
     }
     if (file.size > MAX_FILE_BYTES) {
-      setStatus("تم تجاهل " + file.name + " لأن حجمه أكبر من 100 ميجابايت.", true);
+      setStatus("تم تجاهل " + file.name + " لأن حجمه أكبر من 40 ميجابايت.", true);
       continue;
     }
     if (clips.reduce((sum, clip) => sum + clip.file.size, 0) + file.size > MAX_TOTAL_BYTES) {
-      setStatus("تم الوصول إلى الحد الإجمالي 150 ميجابايت.", true);
+      setStatus("تم الوصول إلى الحد الإجمالي 60 ميجابايت.", true);
       break;
     }
     try {
