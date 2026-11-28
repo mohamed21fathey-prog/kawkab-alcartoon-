@@ -201,6 +201,7 @@ async function loadEngine() {
     await ffmpeg.load({
       coreURL: await toBlobURL(coreBase + "/ffmpeg-core.js", "text/javascript"),
       wasmURL: await toBlobURL(coreBase + "/ffmpeg-core.wasm", "application/wasm"),
+      // Explicit module-worker URL for the lazily loaded FFmpeg package.
       classWorkerURL: "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/worker.js"
     });
     engineReady = true;
