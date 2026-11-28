@@ -3,11 +3,12 @@
 This is source code for a proposed Cloudflare Workers + D1 backend. It is **not deployed** and is not connected to a live database.
 
 ## Implemented in this branch
-- `backend/worker.js`: API health check, login, session inspection/logout, private project listing/creation/deletion, and admin identity check.
+- `backend/worker.js`: API health check, login, session inspection/logout, private project listing/creation/update/deletion, and admin identity check.
 - PBKDF2-SHA-256 password verification; random session tokens are stored only as SHA-256 hashes.
 - Secure, HttpOnly, SameSite=Strict session cookies; CSRF token and exact-origin checks for state-changing requests.
 - Login throttling backed by hashed account/IP identifiers in D1.
-- Project queries are always scoped to the authenticated user.
+- Project queries and updates/deletions are always scoped to the authenticated user; `PUT /api/v1/projects/:id` updates an owned project only.
+- JSON request bodies are capped at 128 KiB; storyboard JSON has a separate 100 KiB UTF-8 limit.
 - Public registration is intentionally disabled (503) until email verification and abuse controls are implemented.
 - `backend/hash_password.py` creates a password hash for a manually provisioned first administrator. It never sends the password anywhere.
 - `wrangler.toml` is a template with a deliberately invalid D1 database ID placeholder.
