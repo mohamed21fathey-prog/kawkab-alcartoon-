@@ -1,8 +1,5 @@
 "use strict";
 
-import { FFmpeg } from "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js";
-import { toBlobURL } from "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/esm/index.js";
-
 const input = document.querySelector("#video-files");
 const list = document.querySelector("#clip-list");
 const summary = document.querySelector("#file-summary");
@@ -180,7 +177,11 @@ async function loadEngine() {
   progressLabel.textContent = "تحميل محرك الدمج...";
   progressBar.style.width = "4%";
   try {
-    ffmpeg = new FFmpeg();
+    const [{ FFmpeg: FFmpegClass }, { toBlobURL }] = await Promise.all([
+      import("https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js"),
+      import("https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/esm/index.js")
+    ]);
+    ffmpeg = new FFmpegClass();
     ffmpeg.on("progress", ({ progress }) => {
       const percent = Math.max(0, Math.min(100, Math.round(progress * 100)));
       progressBar.style.width = percent + "%";
