@@ -179,8 +179,18 @@ async function handle(request, env) {
 }
 export default {
   async fetch(request, env) {
-    try { return await handle(request, env); }
-    catch (error) {
+    try {
+      const response = await handle(request, env);
+      const origin = request.headers.get("Origin");
+      if (origin && origin === env.ALLOWED_ORIGIN) {
+        const headers = new Headers(response.headers);
+        headers.set("access-control-allow-origin", origin);
+        headers.set("access-control-allow-credentials", "true");
+        headers.append("vary", "Origin");
+        return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+      }
+      return response;
+    } catch (error) {
       console.error("API request failed", error?.message || "unknown");
       return json({ error: "INTERNAL_ERROR" }, 500);
     }
