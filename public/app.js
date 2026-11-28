@@ -233,12 +233,19 @@ function createStoryboard(project) {
 
 function createEgyptianDialogue(scene, index, project) {
   const title = String(scene.title || "المغامرة").replace(/[.!؟]+$/g, "").trim();
-  const action = String(scene.action || "").replace(/[.!؟]+$/g, "").trim();
-  const shortAction = action.length > 230 ? action.slice(0, 227).replace(/\s+\S*$/, "") + "..." : action;
-  const openings = ["يا جماعة، ركزوا معايا! ","استنوا بس، إيه اللي بيحصل هنا؟ ","بصوا يا أبطال، ","يا نهار أبيض! ","يلا نشوف هنعمل إيه دلوقتي. ","واضح إن الموضوع محتاج شوية شجاعة. ","الحمد لله، بدأنا نلاقي الحل. ","ودي كانت مغامرة مش هنتنسي بسهولة! "];
+  const lines = [
+    "يا جماعة، ركزوا معايا! إحنا دلوقتي في مشهد " + title + "، ولسه في مفاجآت كتير مستنيانا.",
+    "استنوا بس، إيه السر اللي مستخبي في مشهد " + title + "؟ يلا نكتشفه سوا.",
+    "بصوا يا أبطال، مشهد " + title + " محتاج مننا نركز ونفكر كويس قبل أي خطوة.",
+    "يا نهار أبيض! في مشهد " + title + " لازم نتصرف بسرعة ونساعد بعض.",
+    "الموضوع بيصعب في مشهد " + title + "، بس إحنا مش هنستسلم، أكيد هنلاقي حل.",
+    "عندي فكرة! في مشهد " + title + " لو اتعاونّا هنقدر نعدّي الموقف ده.",
+    "دي اللحظة الحاسمة في مشهد " + title + "، يا رب الخطة تنجح!",
+    "الحمد لله، عدّينا مشهد " + title + "، واتعلمنا إن الشجاعة والتعاون بيفرقوا."
+  ];
   return {
     speaker: "الراوي",
-    dialogue: (openings[index % openings.length] + (shortAction || title)).slice(0, 500)
+    dialogue: lines[index % lines.length].slice(0, 500)
   };
 }
 
