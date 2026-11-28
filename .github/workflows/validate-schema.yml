@@ -5,6 +5,10 @@ on:
     paths:
       - "index.html"
       - "app.js"
+      - "games.html"
+      - "games.js"
+      - "games.css"
+      - "backend/**"
       - "style.css"
       - "public/**"
       - "wrangler.jsonc"
@@ -24,7 +28,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Check JavaScript syntax
-        run: node --check app.js
+        run: node --check app.js && node --check games.js
       - name: Validate HTML structure and local references
         run: python3 scripts/validate_frontend.py
 
