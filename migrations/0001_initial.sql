@@ -236,3 +236,24 @@ WHEN NEW.status = 'approved' AND (
 BEGIN
  SELECT RAISE(ABORT, 'approved payment requires a matching approved top-up');
 END;
+
+-- Payment reviews have a controlled state machine and become immutable when final.
+CREATE TRIGGER IF NOT EXISTS payment_requests_transition_guard
+BEFORE UPDATE ON payment_requests
+WHEN
+ OLD.status IN ('approved','rejected')
+ OR NEW.id <> OLD.id
+ OR NEW.user_id <> OLD.user_id
+ OR NEW.provider <> OLD.provider
+ OR NEW.amount_minor <> OLD.amount_minor
+ OR NEW.currency <> OLD.currency
+ OR NEW.created_at <> OLD.created_at
+ OR (OLD.wallet_transaction_id IS NOT NULL
+     AND COALESCE(NEW.wallet_transaction_id,'') <> OLD.wallet_transaction_id)
+ OR NOT (
+   (OLD.status = 'pending' AND NEW.status IN ('pending','approved','rejected','needs_information'))
+   OR (OLD.status = 'needs_information' AND NEW.status IN ('needs_information','pending','approved','rejected'))
+ )
+BEGIN
+ SELECT RAISE(ABORT, 'invalid or immutable payment request transition');
+END;
