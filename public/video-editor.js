@@ -15,6 +15,7 @@ const mergedPreview = document.querySelector("#merged-preview");
 const downloadLink = document.querySelector("#download-merged");
 const voiceInput = document.querySelector("#voiceover-file");
 const voiceStatus = document.querySelector("#voiceover-status");
+const clearVoiceButton = document.querySelector("#clear-voiceover");
 
 const MAX_FILES = 5;
 const MAX_TOTAL_BYTES = 60 * 1024 * 1024;
@@ -133,6 +134,14 @@ function getDuration(file) {
       reject(new Error("أحد الملفات ليس فيديو صالحًا أو أن تنسيقه غير مدعوم في هذا المتصفح."));
     };
     video.src = url;
+  });
+}
+if (clearVoiceButton && voiceInput && voiceStatus) {
+  clearVoiceButton.addEventListener("click", () => {
+    voiceInput.value = "";
+    voiceFile = null;
+    voiceStatus.textContent = "تم إلغاء اختيار التعليق الصوتي. سيُصدّر الفيديو بصوت المقاطع الأصلية.";
+    setStatus("تم إلغاء التعليق الصوتي.");
   });
 }
 if (voiceInput && voiceStatus) {
