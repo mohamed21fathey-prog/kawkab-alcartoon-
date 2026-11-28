@@ -82,7 +82,6 @@ INSERT OR IGNORE INTO section_topics (id,section_id,title_ar,summary_ar,is_publi
 -- Browser-only mini-game catalogue. Game implementation is a separate frontend task.
 INSERT OR IGNORE INTO mini_games (id,slug,title_ar,description_ar,game_kind,is_published,min_age,max_age,sort_order) VALUES ('game_memory-match','memory-match','لعبة الذاكرة','اقلب البطاقات واعثر على الأزواج المتشابهة','memory',0,3,10,1);
 INSERT OR IGNORE INTO mini_games (id,slug,title_ar,description_ar,game_kind,is_published,min_age,max_age,sort_order) VALUES ('game_color-quest','color-quest','تحدي الألوان','اختر اللون الصحيح وفق التعليمات','color-quiz',0,3,8,2);
-INSERT OR IGNORE INTO mini_games (id,slug,title_ar,description_ar,game_kind,is_published,min_age,max_age,sort_order) VALUES ('game_picture-puzzle','picture-puzzle','لغز الصورة','رتب القطع لتكتمل الصورة','picture-puzzle',0,5,12,3);
 
 INSERT OR IGNORE INTO mini_games (id,slug,title_ar,description_ar,game_kind,is_published,min_age,max_age,sort_order) VALUES ('game_number-pattern','number-pattern','تحدي الأرقام','أكمل تسلسل الأرقام واختر الإجابة الصحيحة','number-pattern',0,5,10,3);
 INSERT OR IGNORE INTO mini_games (id,slug,title_ar,description_ar,game_kind,is_published,min_age,max_age,sort_order) VALUES ('game_letter-hunt','letter-hunt','صيد الحروف','ابحث عن الحرف المطلوب بين مجموعة من الحروف','letter-match',0,4,8,4);
