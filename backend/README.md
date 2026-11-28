@@ -5,7 +5,7 @@ This folder is the **design and database foundation**, not a deployed backend.
 ## Current status
 - The public site is still a static frontend. Existing local drafts remain browser-local.
 - `schema.sql` defines the initial SQLite schema intended to be compatible with Cloudflare D1.
-- `content-catalog.json` contains 13 Arabic sections with five draft topic ideas each, plus a five-game roadmap. Draft entries are not published automatically.
+- `content-catalog.json` contains 13 Arabic sections with five draft topic ideas each, plus five browser mini-games. The games are local prototypes; catalogue content remains draft-only.
 - No database, authentication provider, file bucket, payment gateway, video-generation provider, or background agent has been connected.
 - No API keys, paid services, or KIE.ai integration are included.
 
@@ -29,7 +29,7 @@ This folder is the **design and database foundation**, not a deployed backend.
 - Admin actions must be authorized on the server and written to `audit_logs`.
 
 ## Not implemented yet
-Authentication endpoints, email delivery, admin UI/API, object storage, payment evidence upload, wallet operations, moderation scanners, analytics collection, customer-support bot, video generation, rendering, and background jobs. The catalogue is editorial planning data only; detailed lessons, stories, worksheets, and the two planned games still need implementation.
+Authentication endpoints, email delivery, admin UI/API, object storage, payment evidence upload, wallet operations, moderation scanners, analytics collection, customer-support bot, video generation, rendering, and background jobs. The catalogue is editorial planning data only; detailed lessons, stories, and worksheets still need full editorial content and review. The five browser games are prototypes and need cross-device play testing before publication.
 
 ## Deployment gate
 Do not deploy or connect a live D1 database until the owner approves the provider, checks the account's free-tier terms/quotas, and supplies the required account-side setup. Do not add paid services or secrets without explicit approval.
