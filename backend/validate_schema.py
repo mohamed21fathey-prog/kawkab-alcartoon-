@@ -50,4 +50,12 @@ try:
 except sqlite3.IntegrityError:
     pass
 
+# The legitimate manual-review path must work when the matching top-up is approved first.
+db.execute("UPDATE wallet_transactions SET status='approved', reviewed_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id='wallet-pending'")
+db.execute("""INSERT INTO payment_requests
+ (id,user_id,provider,amount_minor,status,wallet_transaction_id)
+ VALUES ('payment-valid','wallet-test','instapay',5000,'pending','wallet-pending')""")
+db.execute("UPDATE payment_requests SET status='approved' WHERE id='payment-valid'")
+assert db.execute("SELECT status FROM payment_requests WHERE id='payment-valid'").fetchone()[0] == "approved"
+
 print(f"SQLite schema OK: {len(required)} required tables, {sections} sections, {topics} topics, {games} mini-games; migration parity and financial guards validated.")
