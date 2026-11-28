@@ -201,3 +201,38 @@ CREATE TABLE IF NOT EXISTS mini_games (
   CHECK (min_age IS NULL OR min_age >= 3),
   CHECK (max_age IS NULL OR max_age >= min_age)
 );
+
+-- Financial records are append-only except for one pending-to-final review.
+CREATE TRIGGER IF NOT EXISTS wallet_transactions_review_once
+BEFORE UPDATE ON wallet_transactions
+WHEN OLD.status <> 'pending'
+ OR NEW.status NOT IN ('approved','rejected','cancelled')
+ OR NEW.id <> OLD.id OR NEW.user_id <> OLD.user_id
+ OR NEW.direction <> OLD.direction OR NEW.transaction_type <> OLD.transaction_type
+ OR NEW.amount_credits <> OLD.amount_credits
+ OR NEW.idempotency_key <> OLD.idempotency_key
+ OR COALESCE(NEW.reference_id,'') <> COALESCE(OLD.reference_id,'')
+ OR NEW.created_at <> OLD.created_at
+BEGIN
+ SELECT RAISE(ABORT, 'wallet transaction is immutable after creation/review');
+END;
+CREATE TRIGGER IF NOT EXISTS wallet_transactions_no_delete
+BEFORE DELETE ON wallet_transactions
+BEGIN
+ SELECT RAISE(ABORT, 'wallet transactions are append-only');
+END;
+CREATE TRIGGER IF NOT EXISTS payment_request_approval_guard
+BEFORE UPDATE OF status ON payment_requests
+WHEN NEW.status = 'approved' AND (
+ NEW.wallet_transaction_id IS NULL OR NOT EXISTS (
+  SELECT 1 FROM wallet_transactions wt
+  WHERE wt.id = NEW.wallet_transaction_id
+   AND wt.user_id = NEW.user_id
+   AND wt.direction = 'credit'
+   AND wt.transaction_type = 'topup'
+   AND wt.status = 'approved'
+ )
+)
+BEGIN
+ SELECT RAISE(ABORT, 'approved payment requires a matching approved top-up');
+END;
