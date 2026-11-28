@@ -24,3 +24,50 @@ let numberPoints=0,numberAnswer=8;
 function nextNumber(){const start=Math.floor(Math.random()*4)+1;const step=Math.floor(Math.random()*3)+2;const values=[start,start+step,start+step*2];numberAnswer=start+step*3;document.querySelector("#number-question").textContent=values.join("، ")+"، ؟";const opts=shuffle([numberAnswer,numberAnswer+1,Math.max(0,numberAnswer-1)]);const holder=document.querySelector("#number-options");holder.innerHTML="";opts.forEach(value=>{const button=document.createElement("button");button.type="button";button.textContent=new Intl.NumberFormat("ar-EG").format(value);button.addEventListener("click",()=>{if(value===numberAnswer){numberPoints++;document.querySelector("#number-feedback").textContent="صحيح! أنت بارع في اكتشاف الأنماط."; }else{document.querySelector("#number-feedback").textContent="الإجابة الصحيحة هي "+new Intl.NumberFormat("ar-EG").format(numberAnswer)+"."; }document.querySelector("#number-score").textContent="النقاط: "+numberPoints;holder.querySelectorAll("button").forEach(b=>b.disabled=true);});holder.append(button);});document.querySelector("#number-feedback").textContent="اختر الرقم الذي يكمل النمط.";}
 document.querySelector("#number-next").addEventListener("click",nextNumber);
 nextNumber();
+
+
+// Letter hunt: local-only play, no account or child data collection.
+const arabicLetters=[..."ابتثجحخدذرزسشصضطظعغفقكلمنهوي"];
+let lettersPoints=0,lettersAnswer="";
+function nextLetters(){
+  const pool=shuffle([...arabicLetters]).slice(0,6);
+  lettersAnswer=pool[Math.floor(Math.random()*pool.length)];
+  document.querySelector("#letters-question").textContent="اعثر على حرف: "+lettersAnswer;
+  document.querySelector("#letters-feedback").textContent="اضغط على الحرف المطابق.";
+  document.querySelector("#letters-score").textContent="النقاط: "+new Intl.NumberFormat("ar-EG").format(lettersPoints);
+  const holder=document.querySelector("#letters-options");holder.innerHTML="";
+  shuffle(pool).forEach(letter=>{
+    const button=document.createElement("button");button.type="button";button.textContent=letter;
+    button.setAttribute("aria-label","الحرف "+letter);
+    button.addEventListener("click",()=>{
+      if(letter===lettersAnswer){lettersPoints++;document.querySelector("#letters-feedback").textContent="أحسنت! هذا هو الحرف الصحيح.";}
+      else{document.querySelector("#letters-feedback").textContent="محاولة رائعة! الحرف المطلوب هو "+lettersAnswer+".";}
+      document.querySelector("#letters-score").textContent="النقاط: "+new Intl.NumberFormat("ar-EG").format(lettersPoints);
+      holder.querySelectorAll("button").forEach(b=>b.disabled=true);
+    });holder.append(button);
+  });
+}
+document.querySelector("#letters-next").addEventListener("click",nextLetters);nextLetters();
+
+// Shape challenge: recognize common geometric shapes.
+const shapes=[{name:"الدائرة",symbol:"●"},{name:"المربع",symbol:"■"},{name:"المثلث",symbol:"▲"},{name:"المعين",symbol:"◆"},{name:"النجمة",symbol:"★"}];
+let shapesPoints=0,shapesAnswer=null;
+function nextShapes(){
+  shapesAnswer=shapes[Math.floor(Math.random()*shapes.length)];
+  document.querySelector("#shapes-question").textContent="اختر شكل: "+shapesAnswer.name;
+  document.querySelector("#shapes-feedback").textContent="فكّر جيدًا ثم اختر.";
+  document.querySelector("#shapes-score").textContent="النقاط: "+new Intl.NumberFormat("ar-EG").format(shapesPoints);
+  const holder=document.querySelector("#shapes-options");holder.innerHTML="";
+  shuffle(shapes).forEach(shape=>{
+    const button=document.createElement("button");button.type="button";
+    button.textContent=shape.symbol;button.setAttribute("aria-label",shape.name);
+    button.style.fontSize="32px";
+    button.addEventListener("click",()=>{
+      if(shape===shapesAnswer){shapesPoints++;document.querySelector("#shapes-feedback").textContent="ممتاز! تعرفت على الشكل الصحيح.";}
+      else{document.querySelector("#shapes-feedback").textContent="حاول مرة أخرى في الجولة القادمة. الشكل هو "+shapesAnswer.name+".";}
+      document.querySelector("#shapes-score").textContent="النقاط: "+new Intl.NumberFormat("ar-EG").format(shapesPoints);
+      holder.querySelectorAll("button").forEach(b=>b.disabled=true);
+    });holder.append(button);
+  });
+}
+document.querySelector("#shapes-next").addEventListener("click",nextShapes);nextShapes();
