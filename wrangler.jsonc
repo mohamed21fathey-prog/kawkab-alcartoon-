@@ -1,0 +1,8 @@
+{
+  "name": "kawkab-alcartoon",
+  "compatibility_date": "2026-11-27",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  }
+}

@@ -1,0 +1,42 @@
+name: Validate Kawkab Al Cartoon
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "app.js"
+      - "games.html"
+      - "games.js"
+      - "games.css"
+      - "backend/**"
+      - "style.css"
+      - "public/**"
+      - "wrangler.jsonc"
+      - "scripts/**"
+      - "migrations/**/*.sql"
+      - ".github/workflows/validate-schema.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: node --check app.js && node --check games.js
+      - name: Validate HTML structure and local references
+        run: python3 scripts/validate_frontend.py
+
+  database:
+    name: SQLite schema and behavior checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Validate schema, seed data, migration parity, and financial guards
+        run: python3 backend/validate_schema.py

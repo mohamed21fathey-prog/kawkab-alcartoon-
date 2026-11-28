@@ -1,0 +1,25 @@
+name: Frontend smoke checks
+
+on:
+  push:
+    branches:
+      - main
+      - feature/kawkab-frontend-safe
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: |
+          find . -name '*.js' -not -path './node_modules/*' -print0 | xargs -0 -n1 node --check
+      - name: Check HTML references and root/public consistency
+        run: python3 scripts/check_frontend.py

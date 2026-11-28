@@ -3,63 +3,139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="كوكب الكرتون — منصة للإبداع وصناعة الفيديو والقصص وكتب التلوين والتعليم والإعلانات.">
-  <title>كوكب الكرتون | من خيالك إلى عالم من الإبداع</title>
+  <meta name="description" content="كوكب الكرتون — منصة عائلية لصناعة الفيديو والقصص والتعليم والأنشطة والإعلانات والمنتجات الرقمية.">
+  <meta name="theme-color" content="#07152f">
+  <title>كوكب الكرتون | عالمك يبدأ بفكرة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="launch-ribbon"><span class="ribbon-dot"></span> نسخة تطوير تجريبية — بعض الأدوات لا تزال قيد التجهيز <a href="#studio">جرّب مساحة التخطيط ←</a></div>
 <header class="topbar">
-  <a class="brand" href="#"><span class="brand-mark">✦</span><span>كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
-  <button class="menu-toggle" aria-label="فتح القائمة" aria-expanded="false">☰</button>
-  <nav id="nav">
-    <a href="#services">الخدمات</a><a href="#market">المتجر</a><a href="#about">عن المنصة</a>
-    <a class="nav-cta" href="#start">ابدأ الإبداع</a>
+  <a class="brand" href="#home" aria-label="كوكب الكرتون - الرئيسية">
+    <span class="brand-mark" aria-hidden="true">✦</span>
+    <span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span>
+  </a>
+  <button class="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav">☰</button>
+  <nav id="nav" aria-label="القائمة الرئيسية">
+    <a href="#services">اكتشف المنصة</a><a href="#studio">استوديو الإبداع</a><a href="video-editor.html">دمج الفيديو</a><a href="games.html">الألعاب</a><a href="#market">المتجر</a>
+    <a class="nav-cta" href="#studio">ابدأ من هنا <span>↙</span></a>
   </nav>
 </header>
-<main>
-  <section class="hero" id="start">
+
+<main id="home">
+  <section class="hero">
     <div class="hero-copy">
-      <span class="eyebrow">مساحة واحدة لكل أفكارك</span>
-      <h1>من خيالك إلى<br><em>عالم من الإبداع</em></h1>
-      <p>اصنع فيديوهاتك، واكتشف القصص، وحمّل كتب التلوين والأنشطة التعليمية، وجهّز إعلاناتك — للكبار والصغار.</p>
-      <div class="hero-actions"><a class="btn primary" href="#services">اكتشف خدماتنا <span>←</span></a><a class="btn ghost" href="#market">تصفّح المتجر</a></div>
-      <div class="trust"><span>✦</span> محتوى إبداعي وتعليمي وترفيهي لجميع أفراد الأسرة</div>
+      <span class="eyebrow"><i></i> منصة عربية للإبداع وصناعة المحتوى</span>
+      <h1>من الفكرة إلى عالمٍ<br><em>يصنعه خيالك</em></h1>
+      <p>خطّط لفيلمك أو قصتك، جهّز مشاهدك، وجرّب أدوات الإبداع والتعلّم والترفيه في مساحة واحدة. ابدأ بخطوة بسيطة، وطوّر مشروعك مرحلةً بعد مرحلة.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#studio">ابدأ مشروعك الآن <span>←</span></a>
+        <a class="btn secondary" href="#services">استكشف مجالات المنصة</a>
+      </div>
+      <div class="hero-proof"><span><b>01</b> اكتب فكرتك</span><span><b>02</b> جهّز مشاهدك</span><span><b>03</b> طوّر مشروعك</span></div>
+      <div class="hero-note"><span>✦</span> ابدأ مجانًا في أدوات التخطيط المحلية — دون رصيد أو اشتراك</div>
     </div>
-    <div class="hero-art" aria-label="رسوم تجريدية ملونة">
-      <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-      <div class="planet">كوكب<br><b>الإبداع</b><span>✦</span></div>
-      <div class="float-card card-a">🎬 <b>اصنع فيديوك</b></div>
-      <div class="float-card card-b">📚 <b>قصص وكتب</b></div>
-      <div class="float-card card-c">🎨 <b>لوّن وتعلّم</b></div>
-      <div class="spark s1">✦</div><div class="spark s2">✧</div><div class="spark s3">✦</div>
+    <div class="universe" aria-label="كوكب أزرق تحيط به حلقات ونجوم">
+      <div class="starfield starfield-one">✦　·　✧　　·　✦</div>
+      <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div>
+      <div class="planet"><span class="planet-shine"></span><span class="planet-star">✦</span><b>كوكب</b><strong>الكرتون</strong><small>عالم من الخيال</small></div>
+      <span class="satellite sat-one">🎬 <b>خطّط لفيلمك</b></span>
+      <span class="satellite sat-two">📚 <b>تعلّم واكتشف</b></span>
+      <span class="satellite sat-three">🎨 <b>اصنع محتواك</b></span>
+      <span class="spark spark-one">✧</span><span class="spark spark-two">✦</span><span class="spark spark-three">✧</span>
     </div>
   </section>
 
-  <section class="section" id="services">
-    <div class="section-heading"><div><span class="eyebrow">اكتشف عالمك</span><h2>كل أدوات الإبداع في مكان واحد</h2></div><p>اختَر المساحة المناسبة لفكرتك وابدأ رحلتك.</p></div>
+  <section class="section services" id="services">
+    <div class="section-heading">
+      <div><span class="eyebrow">ماذا يمكنك أن تفعل؟</span><h2>كل أدوات الإبداع في مدار واحد</h2></div>
+      <p>استكشف مجالات كوكب الكرتون. بعض المساحات متاحة للتجربة، وأخرى نجهّزها للإطلاق على مراحل.</p>
+    </div>
+    <div class="service-groups"><span>صناعة المحتوى</span><span>التعليم والمعرفة</span><span>الترفيه العائلي</span><span>التسويق والأعمال</span></div>
     <div class="service-grid">
-      <article class="service featured"><span class="service-icon">🎬</span><span class="tag">قريبًا</span><h3>استوديو صناعة الفيديو</h3><p>حوّل فكرتك إلى سيناريو ومشاهد وفيديو متكامل.</p><a href="#roadmap">اكتشف التفاصيل ←</a></article>
-      <article class="service"><span class="service-icon">🎞️</span><h3>مصنع الحلقات</h3><p>خطوات منظمة لإعداد الشخصيات والمشاهد وتجميع الحلقة.</p><a href="#roadmap">اكتشف التفاصيل ←</a></article>
-      <article class="service"><span class="service-icon">📖</span><h3>عالم القصص</h3><p>قصص مصوّرة ومغامرات وقراءات عائلية.</p><a href="#market">تصفّح المنتجات ←</a></article>
-      <article class="service"><span class="service-icon">🖍️</span><h3>كتب التلوين</h3><p>ملفات قابلة للطباعة والأنشطة الإبداعية.</p><a href="#market">تصفّح المنتجات ←</a></article>
-      <article class="service"><span class="service-icon">🎓</span><h3>التعليم والأنشطة</h3><p>أوراق عمل ومواد تعليمية للمتعلمين والمعلمين.</p><a href="#market">تصفّح المنتجات ←</a></article>
-      <article class="service"><span class="service-icon">📣</span><h3>استوديو الإعلانات</h3><p>أفكار ومحتوى مرئي للتسويق والمشروعات.</p><a href="#roadmap">اكتشف التفاصيل ←</a></article>
+      <article class="service-card service-main">
+        <span class="service-icon">🎬</span><span class="service-label">مساحة الإبداع</span>
+        <h3>استوديو صناعة الفيديو</h3><p>ابدأ بفكرتك، واكتب السيناريو، وخطّط المشاهد، وجهّز مشروع الفيديو في مساحة عمل واحدة.</p>
+        <a href="#studio">افتح الاستوديو <b>←</b></a>
+      </article>
+      <article class="service-card"><span class="service-icon">🎞️</span><h3>مصنع الحلقات</h3><p>تنظيم مراحل الحلقة: السيناريو، الشخصيات، المشاهد، الغلاف وتجهيز ملفات المشروع.</p><a href="#studio">اكتشف التفاصيل ←</a></article>
+      <article class="service-card"><span class="service-icon">🎬</span><h3>دمج الفيديوهات</h3><p>رتّب مقاطعك وادمجها في ملف MP4 واحد محليًا من داخل المتصفح.</p><a href="video-editor.html">افتح استوديو الدمج ←</a></article>
+      <article class="service-card"><span class="service-icon">🧸</span><h3>محتوى الحضانة</h3><p>أفكار وأنشطة مبسطة للحروف والأرقام والألوان والمهارات المبكرة.</p><a href="#market">استكشف المحتوى ←</a></article>
+      <article class="service-card"><span class="service-icon">🎓</span><h3>شرح المناهج</h3><p>محتوى تعليمي ووسائل شرح تساعد على تبسيط الدروس والمفاهيم.</p><a href="#market">استكشف المحتوى ←</a></article>
+      <article class="service-card"><span class="service-icon">📘</span><h3>التعليم للكبار</h3><p>مواد معرفية وشروحات ومحتوى تدريبي لمختلف الاهتمامات.</p><a href="#market">استكشف المحتوى ←</a></article>
+      <article class="service-card"><span class="service-icon">🗺️</span><h3>القصص والمغامرات</h3><p>عوالم خيالية وقصص عائلية ومغامرات مليئة بالتشويق والقيم الجميلة.</p><a href="#market">اكتشف القصص ←</a></article>
+      <article class="service-card"><span class="service-icon">🖍️</span><h3>كتب التلوين</h3><p>صفحات وأفكار تلوين وأنشطة إبداعية قابلة للطباعة.</p><a href="#market">تصفّح المنتجات ←</a></article>
+      <article class="service-card"><span class="service-icon">🧩</span><h3>الألغاز والتحديات</h3><p>أنشطة ذهنية وأسئلة وتحديات ممتعة لمختلف الأعمار.</p><a href="#market">اكتشف الأنشطة ←</a></article>
+      <article class="service-card"><span class="service-icon">🎮</span><h3>ألعاب الأطفال</h3><p>ألعاب خفيفة لتنمية الذاكرة والملاحظة والتفكير، تعمل داخل المتصفح.</p><a href="games.html">العب الآن ←</a></article>
+      <article class="service-card"><span class="service-icon">🌙</span><h3>أغاني وقصص النوم</h3><p>مساحة للأناشيد والقصص الهادئة واللحظات العائلية اللطيفة.</p><a href="#market">اكتشف المحتوى ←</a></article>
+      <article class="service-card"><span class="service-icon">📣</span><h3>الإعلانات والتسويق</h3><p>أفكار وسيناريوهات ومحتوى مرئي للمشروعات والعلامات التجارية.</p><a href="#studio">ابدأ بفكرتك ←</a></article>
+      <article class="service-card"><span class="service-icon">📱</span><h3>إعلانات السوشيال ميديا</h3><p>محتوى قصير ومناسب لمنصات التواصل والحملات الرقمية.</p><a href="#studio">جهّز فكرتك ←</a></article>
+      <article class="service-card"><span class="service-icon">🛍️</span><h3>المتجر الرقمي</h3><p>منتجات وملفات رقمية تساعدك على التعلّم وصناعة المحتوى.</p><a href="#market">تصفّح المتجر ←</a></article>
     </div>
   </section>
 
-  <section class="market section" id="market">
-    <div class="section-heading"><div><span class="eyebrow">متجر الكوكب</span><h2>منتجات رقمية تلهمك</h2></div><span class="coming">نماذج عرض — البيع الإلكتروني سيُفعّل لاحقًا</span></div>
+  <section class="studio-section" id="studio">
+    <div class="studio-intro">
+      <span class="eyebrow">مساحة العمل الرئيسية</span>
+      <h2>استوديو كوكب الكرتون</h2>
+      <p>ابدأ من الفكرة، ثم حوّلها إلى خطة إنتاج مرتبة. الاستوديو الحالي يساعدك على كتابة المشروع وإعداد مخطط مشاهد قابل للتعديل والحفظ والتصدير.</p>
+      <div class="studio-benefits"><div><span>✍️</span><b>اكتب فكرتك</b><small>حدّد النوع والعنوان والملخص.</small></div><div><span>🎬</span><b>جهّز المشاهد</b><small>أنشئ خطة من 8 مشاهد قابلة للتعديل.</small></div><div><span>💾</span><b>احفظ عملك</b><small>احتفظ بمسوداتك على جهازك.</small></div></div>
+      <div class="studio-truth"><strong>معلومة مهمة عن النسخة الحالية</strong><p>الاستوديو ينشئ خطة نصية فقط، ولا يولّد فيديو أو صورًا متحركة أو ملفًا صوتيًا تلقائيًا حتى الآن.</p></div>
+    </div>
+    <form class="studio-form" id="idea-form">
+      <div class="form-head"><div><span class="form-kicker">خطوة 1 من 3</span><h3>أنشئ مشروعك الأول</h3></div><small>مساحة تخطيط محلية</small></div>
+      <div class="studio-progress" aria-label="مراحل التخطيط"><span class="active"><b>1</b> الفكرة</span><i></i><span><b>2</b> المشاهد</span><i></i><span><b>3</b> الحفظ</span></div>
+      <div class="studio-fields">
+      <div class="field-group"><label for="project-type">نوع المشروع</label>
+      <select id="project-type" required>
+        <option value="فيلم كرتوني">فيلم كرتوني</option><option value="حلقة مسلسل">حلقة مسلسل</option><option value="فيديو تعليمي">فيديو تعليمي</option><option value="إعلان تسويقي">إعلان تسويقي</option><option value="قصة مصورة">قصة مصورة</option><option value="أغنية عربية">أغنية عربية</option>
+      </select>
+      </div><div class="field-group"><label for="project-name">اسم المشروع</label>
+      <input id="project-name" type="text" placeholder="مثال: مغامرة في أعماق الفضاء" maxlength="80" required>
+      </div><div class="field-group field-wide"><label for="project-idea">ملخص الفكرة</label>
+      <textarea id="project-idea" rows="4" maxlength="600" placeholder="اكتب ملخص الفكرة والشخصيات وما الذي تريد تقديمه..." required></textarea>
+      </div></div>
+      <div class="studio-form-actions"><button class="btn secondary" id="speak-project-idea" type="button">🗣️ استمع إلى فكرتك بالمصري</button>
+      <button class="btn primary submit-btn" type="submit">احفظ الفكرة وأنشئ المشروع <span>←</span></button></div>
+      <p class="form-note">احفظ مخططك على هذا الجهاز، أو صدّره كملف JSON. الحوار يُقترح باللهجة المصرية لكل مشهد ويمكنك تعديله، ثم الاستماع إليه بصوت عربي متاح على جهازك. المعاينة لا تُنشئ ملف MP3 ولا ترفعه إلى خادم ولا تخصم رصيدًا.</p>
+      <div class="idea-result" id="idea-result" aria-live="polite" hidden></div>
+      
+    </form>
+  </section>
+
+  <section class="studio-library" aria-label="مكتبة المشاريع"><div class="saved-projects" aria-labelledby="saved-projects-title">
+        <div class="saved-projects-head"><div><span class="eyebrow">مساحة خاصة بك</span><h3 id="saved-projects-title">مشاريعك ومسوداتك</h3></div><span id="project-count">0 مشروع</span></div>
+        <p class="saved-projects-note">كل مشروع محفوظ في هذا المتصفح على جهازك. صدّر نسخة احتياطية قبل تغيير الجهاز أو مسح بيانات المتصفح.</p>
+        <div class="project-tools"><label class="import-project-label" for="project-import">استيراد مشروع JSON</label><input id="project-import" class="project-import-input" type="file" accept=".json,application/json"></div>
+        <p class="project-feedback" id="project-feedback" role="status" aria-live="polite"></p>
+        <div id="saved-project-list" class="saved-project-list" aria-live="polite"><p class="empty-projects">لا توجد مشاريع محفوظة حتى الآن.</p></div>
+      </div></section>
+
+  <section class="section market" id="market">
+    <div class="section-heading"><div><span class="eyebrow">متجر الكوكب</span><h2>منتجات رقمية قيد التجهيز</h2></div><span class="status-note">العرض تجريبي — الشراء غير متاح بعد</span></div>
     <div class="product-grid">
-      <article class="product"><div class="product-art coloring">🖍️</div><div class="product-info"><span class="product-type">كتاب تلوين</span><h3>مغامرات في عالم الأشكال</h3><p>صفحات تلوين قابلة للطباعة.</p><span class="price">قريبًا</span></div></article>
-      <article class="product"><div class="product-art story">📚</div><div class="product-info"><span class="product-type">قصة مصوّرة</span><h3>سرّ الغابة المضيئة</h3><p>قصة خيالية بقيم إيجابية.</p><span class="price">قريبًا</span></div></article>
-      <article class="product"><div class="product-art learning">🧩</div><div class="product-info"><span class="product-type">أنشطة تعليمية</span><h3>اكتشف وتعلّم</h3><p>أنشطة وأوراق عمل متنوعة.</p><span class="price">قريبًا</span></div></article>
+      <article class="product-card"><div class="product-art art-color">🖍️<span>01</span></div><div class="product-info"><small>كتب تلوين</small><h3>رحلة الألوان والأشكال</h3><p>فكرة كتاب تلوين وأنشطة للطباعة.</p><span class="product-status">قريبًا</span></div></article>
+      <article class="product-card"><div class="product-art art-story">📚<span>02</span></div><div class="product-info"><small>قصص مصوّرة</small><h3>سر الغابة المضيئة</h3><p>مغامرة خيالية بقيم إيجابية.</p><span class="product-status">قريبًا</span></div></article>
+      <article class="product-card"><div class="product-art art-learn">🧩<span>03</span></div><div class="product-info"><small>أنشطة تعليمية</small><h3>اكتشف وتعلّم</h3><p>أفكار أنشطة وأوراق عمل متنوعة.</p><span class="product-status">قريبًا</span></div></article>
     </div>
   </section>
 
-  <section class="banner" id="about"><div><span class="eyebrow">إبداع بلا حدود</span><h2>فكرتك تستحق أن ترى النور</h2><p>كوكب الكرتون مساحة تجمع الترفيه والتعلّم وصناعة المحتوى في تجربة واحدة.</p></div><a class="btn light" href="#services">استكشف المنصة ←</a></section>
+  <section class="launch-checklist"><div><span class="eyebrow">نعمل على تطوير المنصة</span><h2>نطلق بثقة... خطوة وراء خطوة</h2><p>نراجع الأدوات، ونختبر تجربة الاستخدام، ونفعّل الخدمات تدريجيًا بعد التأكد من جودتها ووضوح تكلفتها.</p></div><div class="checklist-pills"><span>✓ واجهة عربية</span><span>✓ ألعاب تفاعلية</span><span>قيد الاختبار: دمج الفيديو</span><span>قيد التطوير: التوليد الفعلي</span></div></section>
 
-  <section class="section roadmap" id="roadmap"><span class="eyebrow">نبنيها خطوة بخطوة</span><h2>رحلتنا نحو منصة متكاملة</h2><div class="steps"><div><b>01</b><h3>الموقع والمتجر</h3><p>واجهة وتجربة استخدام وصفحات المنتجات.</p></div><div><b>02</b><h3>المحتوى الرقمي</h3><p>كتب وقصص وملفات قابلة للتحميل.</p></div><div><b>03</b><h3>أدوات صناعة المحتوى</h3><p>استوديو تدريجي بمكونات مستقلة.</p></div><div><b>04</b><h3>الدفع والتوسع</h3><p>تفعيل البيع بعد تجهيز الدفع والحماية.</p></div></div></section>
+  <section class="about-banner" id="about">
+    <div><span class="eyebrow">كوكب واحد... عوالم كثيرة</span><h2>من فكرة صغيرة يبدأ عالم كبير</h2><p>نطوّر مساحة عربية تجمع الإبداع والمعرفة والترفيه لجميع أفراد الأسرة.</p></div>
+    <a class="btn banner-btn" href="#services">اكتشف عوالم الكوكب ←</a>
+  </section>
 </main>
-<footer><a class="brand" href="#"><span class="brand-mark">✦</span><span>كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a><p>© 2026 كوكب الكرتون — مساحة للإبداع للجميع.</p><div><a href="#about">عن المنصة</a><a href="#services">الخدمات</a></div></footer>
+
+<footer>
+  <a class="brand footer-brand" href="#home"><span class="brand-mark">✦</span><span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
+  <p>© 2026 كوكب الكرتون — عالمك يبدأ بفكرة.</p>
+  <div><a href="about.html">من نحن</a><a href="privacy.html">الخصوصية</a><a href="contact.html">تواصل معنا</a><a href="#services">الأقسام</a><a href="#studio">الاستوديو</a></div>
+</footer>
 <script src="app.js"></script>
-</body></html>
+</body>
+</html>

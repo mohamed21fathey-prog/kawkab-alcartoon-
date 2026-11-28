@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07152f">
+  <meta name="description" content="ألعاب خفيفة وآمنة للأطفال في كوكب الكرتون.">
+  <title>ألعاب الأطفال | كوكب الكرتون</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="games.css">
+  <script src="games.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="كوكب الكرتون - الرئيسية"><span class="brand-mark">✦</span><span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
+  <button class="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav">☰</button>
+  <nav id="nav" aria-label="القائمة الرئيسية">
+    <a href="index.html#services">أقسام الكوكب</a><a href="index.html#studio">الاستوديو</a><a href="games.html" aria-current="page">ألعاب الأطفال</a><a href="index.html#market">المتجر</a><a href="about.html">من نحن</a>
+  </nav>
+</header>
+<main class="games-page">
+  <section class="games-hero">
+    <span class="eyebrow">منطقة المرح والتعلّم</span>
+    <h1>أهلًا بك في <em>ألعاب الكوكب!</em></h1>
+    <p>ألعاب بسيطة لتنشيط الذاكرة والملاحظة والتفكير. العب وتعلّم واستمتع!</p>
+    <div class="games-safety">★ ألعاب تعمل داخل المتصفح، دون تسجيل حساب أو جمع بيانات الأطفال.</div>
+  </section>
+  <div class="game-audio-tools" aria-label="إعدادات الصوت">
+    <button id="game-sound-toggle" type="button" aria-pressed="true">🔊 الصوت: يعمل</button>
+    <button id="game-speak-help" type="button">🗣️ استمع للتعليمات بالعربية</button>
+    <span id="game-audio-status" role="status" aria-live="polite">مؤثرات صوتية خفيفة وصوت عربي حسب دعم المتصفح.</span>
+  </div>
+  <section class="game-shell" aria-label="الألعاب المتاحة">
+    <div class="game-tabs" role="tablist" aria-label="اختر لعبة">
+      <button class="game-tab active" id="tab-memory" type="button" role="tab" aria-selected="true" aria-controls="game-memory" tabindex="0" data-game="memory">🧠 لعبة الذاكرة</button>
+      <button class="game-tab" id="tab-color" type="button" role="tab" aria-selected="false" aria-controls="game-color" tabindex="-1" data-game="color">🎨 تحدي الألوان</button>
+      <button class="game-tab" id="tab-number" type="button" role="tab" aria-selected="false" aria-controls="game-number" tabindex="-1" data-game="number">🔢 تحدي الأرقام</button>
+      <button class="game-tab" id="tab-letters" type="button" role="tab" aria-selected="false" aria-controls="game-letters" tabindex="-1" data-game="letters">🔤 صيد الحروف</button>
+      <button class="game-tab" id="tab-shapes" type="button" role="tab" aria-selected="false" aria-controls="game-shapes" tabindex="-1" data-game="shapes">🔺 تحدي الأشكال</button>
+    </div>
+    <section class="game-panel active" id="game-memory" role="tabpanel" aria-labelledby="tab-memory" tabindex="0">
+      <div class="game-heading"><div><h2>اعثر على الأزواج المتشابهة</h2><p>اقلب بطاقتين في كل مرة وحاول تذكر أماكن الصور.</p></div><span class="game-score" id="memory-score">الأزواج: ٠ / ٦</span></div>
+      <div class="memory-grid" id="memory-grid" aria-label="بطاقات لعبة الذاكرة"></div>
+      <p class="game-feedback" id="memory-feedback" aria-live="polite">ابدأ بالضغط على أي بطاقتين.</p>
+      <button class="game-restart" id="memory-restart" type="button">ابدأ من جديد</button>
+    </section>
+    <section class="game-panel" id="game-color" role="tabpanel" aria-labelledby="tab-color" tabindex="0" hidden>
+      <div class="game-heading"><div><h2>هل تعرف اللون الصحيح؟</h2><p>اقرأ اسم اللون ثم اختر البطاقة المطابقة.</p></div><span class="game-score" id="color-score">النقاط: ٠</span></div>
+      <div class="color-question" id="color-question">اضغط «سؤال جديد» للبدء.</div>
+      <div class="color-options" id="color-options"></div>
+      <p class="game-feedback" id="color-feedback" aria-live="polite"></p>
+      <button class="game-restart" id="color-next" type="button">سؤال جديد</button>
+    </section>
+    <section class="game-panel" id="game-number" role="tabpanel" aria-labelledby="tab-number" tabindex="0" hidden>
+      <div class="game-heading"><div><h2>اكتشف الرقم التالي</h2><p>فكّر في ترتيب الأرقام واختر الإجابة الصحيحة.</p></div><span class="game-score" id="number-score">النقاط: ٠</span></div>
+      <div class="number-question" id="number-question">٢، ٤، ٦، ؟</div>
+      <div class="number-options" id="number-options">
+        <button type="button" data-answer="7">٧</button><button type="button" data-answer="8">٨</button><button type="button" data-answer="9">٩</button>
+      </div>
+      <p class="game-feedback" id="number-feedback" aria-live="polite">اختر الرقم الذي يكمل النمط.</p>
+      <button class="game-restart" id="number-next" type="button">تحدٍّ جديد</button>
+    </section>
+
+    <section class="game-panel" id="game-letters" role="tabpanel" aria-labelledby="tab-letters" tabindex="0" hidden>
+      <div class="game-heading"><div><h2>صيد الحروف</h2><p>ابحث عن الحرف المطلوب بين الحروف المعروضة.</p></div><span class="game-score" id="letters-score">النقاط: ٠</span></div>
+      <div class="number-question" id="letters-question">اضغط «حروف جديدة» للبدء.</div>
+      <div class="number-options" id="letters-options"></div>
+      <p class="game-feedback" id="letters-feedback" aria-live="polite">اختر الحرف المطابق.</p>
+      <button class="game-restart" id="letters-next" type="button">حروف جديدة</button>
+    </section>
+    <section class="game-panel" id="game-shapes" role="tabpanel" aria-labelledby="tab-shapes" tabindex="0" hidden>
+      <div class="game-heading"><div><h2>تحدي الأشكال</h2><p>تعرّف على الشكل واختر صورته الصحيحة.</p></div><span class="game-score" id="shapes-score">النقاط: ٠</span></div>
+      <div class="number-question" id="shapes-question">اضغط «تحدٍّ جديد» للبدء.</div>
+      <div class="number-options" id="shapes-options"></div>
+      <p class="game-feedback" id="shapes-feedback" aria-live="polite">اختر الشكل المطلوب.</p>
+      <button class="game-restart" id="shapes-next" type="button">تحدٍّ جديد</button>
+    </section>
+  </section>
+  <p class="games-back"><a href="index.html">← العودة إلى الصفحة الرئيسية</a></p>
+</main>
+<footer>
+  <a class="brand footer-brand" href="index.html"><span class="brand-mark">✦</span><span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
+  <p>© 2026 كوكب الكرتون — عالمك يبدأ بفكرة.</p>
+  <div><a href="about.html">من نحن</a><a href="privacy.html">سياسة الخصوصية</a><a href="contact.html">اتصل بنا</a></div>
+</footer>
+</body>
+</html>

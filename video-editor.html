@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07152f">
+  <meta name="description" content="ادمج مقاطع الفيديو محليًا داخل متصفحك باستخدام كوكب الكرتون.">
+  <title>دمج الفيديوهات | كوكب الكرتون</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="video-editor.css">
+</head>
+<body class="video-editor-page">
+<header class="topbar">
+  <a class="brand" href="index.html#home" aria-label="كوكب الكرتون - الرئيسية"><span class="brand-mark" aria-hidden="true">✦</span><span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
+  <a class="nav-cta" href="index.html#studio">العودة للاستوديو ←</a>
+</header>
+<main class="editor-shell">
+  <section class="editor-heading">
+    <span class="eyebrow">أدوات الإنتاج المحلي</span>
+    <h1>استوديو <em>دمج الفيديوهات</em></h1>
+    <p>اجمع مقاطعك في فيديو واحد، غيّر ترتيبها، وشاهد معاينة قبل التصدير. تتم المعالجة على جهازك ولا نرفع ملفاتك إلى خادم.</p>
+  </section>
+  <section class="editor-notice" role="note">
+    <strong>قبل البدء</strong>
+    <p>محرك الدمج يُحمّل عند طلبك فقط من مكتبات مفتوحة المصدر مستضافة على jsDelivr. قد يصل حجم المحرك الأولي إلى نحو 31 ميجابايت، بخلاف ملفات المكتبة، وتحتاج المعالجة إلى ذاكرة ومساحة كافيتين. استخدم اتصالًا مستقرًا، ويفضّل تجربة مقاطع قصيرة أولًا.</p>
+    <p>الإصدار الأول يخرج MP4 بدقة 720p مع صوت المقاطع الأصلية. يمكنك إضافة تعليق صوتي مسجل مسبقًا (MP3 أو WAV أو M4A أو OGG) ليُمزج مع صوت الفيديو. لا يوجد رفع أو خصم رصيد.</p>
+  </section>
+  <section class="editor-panel">
+    <div class="editor-panel-head"><div><span class="step-number">01</span><h2>أضف المقاطع</h2></div><span class="editor-muted">حتى 5 مقاطع — 60 ميجابايت إجمالًا</span></div>
+    <label class="file-picker" for="video-files"><span aria-hidden="true">＋</span><strong>اختر ملفات الفيديو</strong><small>MP4 أو MOV أو WebM أو MKV</small></label>
+    <input id="video-files" type="file" accept="video/mp4,video/quicktime,video/webm,video/x-matroska,.mp4,.mov,.webm,.mkv" multiple hidden>
+    <div id="file-summary" class="file-summary" aria-live="polite">لم تتم إضافة مقاطع بعد.</div>
+    <ol id="clip-list" class="clip-list" aria-label="ترتيب مقاطع الفيديو"></ol>
+  </section>
+  <section class="editor-panel voiceover-panel">
+    <div class="editor-panel-head"><div><span class="step-number">03</span><h2>التعليق الصوتي العربي (اختياري)</h2></div><span class="editor-muted">حتى 20 ميجابايت</span></div>
+    <p class="editor-muted">سجّل تعليقك بالعربية باستخدام مسجل الهاتف أو الكمبيوتر، ثم اختر الملف هنا. سيُمزج التعليق مع صوت المقاطع عند التصدير، ويُقص أو يُمدد بالصمت ليتوافق مع مدة الفيديو.</p>
+    <label class="file-picker" for="voiceover-file"><span aria-hidden="true">🎙️</span><strong>اختر ملف التعليق الصوتي</strong><small>MP3 أو WAV أو M4A أو AAC أو OGG أو WebM</small></label>
+    <input id="voiceover-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.opus,.webm,.flac" hidden>
+    <p id="voiceover-status" class="editor-status" role="status" aria-live="polite">لم يتم اختيار تعليق صوتي.</p>
+    <button id="clear-voiceover" class="mini-action" type="button">إلغاء التعليق الصوتي</button>
+  </section>
+  <section class="editor-panel">
+    <div class="editor-panel-head"><div><span class="step-number">02</span><h2>المعاينة</h2></div><span class="editor-muted">معاينة مقطع واحد في كل مرة</span></div>
+    <video id="clip-preview" class="clip-preview" controls playsinline preload="metadata"></video>
+    <p id="preview-caption" class="editor-muted">اختر مقطعًا من القائمة لمعاينته.</p>
+  </section>
+  <section class="editor-panel export-panel">
+    <div class="editor-panel-head"><div><span class="step-number">04</span><h2>إنشاء الفيديو النهائي</h2></div><span class="editor-muted">MP4 • 720p • 30 إطار/ث</span></div>
+    <div class="editor-actions">
+      <button id="load-engine" class="btn secondary" type="button">تحميل محرك الدمج المجاني</button>
+      <button id="merge-videos" class="btn primary" type="button" disabled>ابدأ دمج المقاطع</button>
+    </div>
+    <div class="progress-wrap" id="progress-wrap" hidden>
+      <div class="progress-track"><span id="progress-bar"></span></div>
+      <p id="progress-label" role="status" aria-live="polite">جارٍ التجهيز...</p>
+    </div>
+    <p id="editor-status" class="editor-status" role="status" aria-live="polite">أضف مقطعين على الأقل، ثم حمّل المحرك عندما تكون مستعدًا.</p>
+    <video id="merged-preview" class="merged-preview" controls playsinline hidden></video>
+    <a id="download-merged" class="btn primary download-merged" hidden>تنزيل الفيديو النهائي</a>
+  </section>
+  <p class="editor-footnote"><a href="index.html">العودة إلى كوكب الكرتون</a> · ملفاتك تبقى داخل المتصفح، واحذف الملفات من القائمة بعد الانتهاء.</p>
+</main>
+<script type="module" src="video-editor.js"></script>
+</body>
+</html>
