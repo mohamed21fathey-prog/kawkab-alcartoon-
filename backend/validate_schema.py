@@ -58,4 +58,26 @@ db.execute("""INSERT INTO payment_requests
 db.execute("UPDATE payment_requests SET status='approved' WHERE id='payment-valid'")
 assert db.execute("SELECT status FROM payment_requests WHERE id='payment-valid'").fetchone()[0] == "approved"
 
+# Final payment reviews are immutable and cannot be approved a second time.
+for sql, label in [
+    ("UPDATE payment_requests SET status='pending' WHERE id='payment-valid'", "approved payment reopened"),
+    ("UPDATE payment_requests SET amount_minor=1 WHERE id='payment-valid'", "approved payment amount mutation"),
+    ("UPDATE payment_requests SET wallet_transaction_id=NULL WHERE id='payment-valid'", "approved payment detached from ledger"),
+]:
+    try:
+        db.execute(sql)
+        raise AssertionError(label + " unexpectedly succeeded")
+    except sqlite3.IntegrityError:
+        pass
+
+# A request that needs more information may return to pending, but its identity/value stay fixed.
+db.execute("INSERT INTO payment_requests (id,user_id,provider,amount_minor,status) VALUES ('payment-info','wallet-test','vodafone_cash',2500,'pending')")
+db.execute("UPDATE payment_requests SET status='needs_information', admin_note='Please clarify the transfer reference' WHERE id='payment-info'")
+db.execute("UPDATE payment_requests SET status='pending' WHERE id='payment-info'")
+try:
+    db.execute("UPDATE payment_requests SET amount_minor=9999 WHERE id='payment-info'")
+    raise AssertionError("pending payment amount mutation unexpectedly succeeded")
+except sqlite3.IntegrityError:
+    pass
+
 print(f"SQLite schema OK: {len(required)} required tables, {sections} sections, {topics} topics, {games} mini-games; migration parity and financial guards validated.")
