@@ -33,6 +33,8 @@
       <button class="game-tab active" type="button" role="tab" aria-selected="true" data-game="memory">🧠 لعبة الذاكرة</button>
       <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="color">🎨 تحدي الألوان</button>
       <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="number">🔢 تحدي الأرقام</button>
+      <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="letters">🔤 صيد الحروف</button>
+      <button class="game-tab" type="button" role="tab" aria-selected="false" data-game="shapes">🔺 تحدي الأشكال</button>
     </div>
     <section class="game-panel active" id="game-memory" role="tabpanel">
       <div class="game-heading"><div><h2>اعثر على الأزواج المتشابهة</h2><p>اقلب بطاقتين في كل مرة وحاول تذكر أماكن الصور.</p></div><span class="game-score" id="memory-score">الأزواج: ٠ / ٦</span></div>
@@ -55,6 +57,21 @@
       </div>
       <p class="game-feedback" id="number-feedback" aria-live="polite">اختر الرقم الذي يكمل النمط.</p>
       <button class="game-restart" id="number-next" type="button">تحدٍّ جديد</button>
+    </section>
+
+    <section class="game-panel" id="game-letters" role="tabpanel" hidden>
+      <div class="game-heading"><div><h2>صيد الحروف</h2><p>ابحث عن الحرف المطلوب بين الحروف المعروضة.</p></div><span class="game-score" id="letters-score">النقاط: ٠</span></div>
+      <div class="number-question" id="letters-question">اضغط «حروف جديدة» للبدء.</div>
+      <div class="number-options" id="letters-options"></div>
+      <p class="game-feedback" id="letters-feedback" aria-live="polite">اختر الحرف المطابق.</p>
+      <button class="game-restart" id="letters-next" type="button">حروف جديدة</button>
+    </section>
+    <section class="game-panel" id="game-shapes" role="tabpanel" hidden>
+      <div class="game-heading"><div><h2>تحدي الأشكال</h2><p>تعرّف على الشكل واختر صورته الصحيحة.</p></div><span class="game-score" id="shapes-score">النقاط: ٠</span></div>
+      <div class="number-question" id="shapes-question">اضغط «تحدٍّ جديد» للبدء.</div>
+      <div class="number-options" id="shapes-options"></div>
+      <p class="game-feedback" id="shapes-feedback" aria-live="polite">اختر الشكل المطلوب.</p>
+      <button class="game-restart" id="shapes-next" type="button">تحدٍّ جديد</button>
     </section>
   </section>
   <p class="games-back"><a href="index.html">← العودة إلى الصفحة الرئيسية</a></p>
