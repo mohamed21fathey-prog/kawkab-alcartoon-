@@ -90,6 +90,39 @@ except FileNotFoundError:
 except (json.JSONDecodeError, OSError) as error:
     errors.append("Invalid wrangler.jsonc configuration: " + str(error))
 
+
+# Validate the standalone games page and keep root/public copies identical.
+GAMES_HTML = ROOT / "games.html"
+GAMES_JS = ROOT / "games.js"
+GAMES_CSS = ROOT / "games.css"
+for required in (GAMES_HTML, GAMES_JS, GAMES_CSS):
+    if not required.is_file():
+        errors.append("Games asset missing: " + str(required.relative_to(ROOT)))
+
+if GAMES_HTML.is_file():
+    games = PageAudit()
+    games.feed(GAMES_HTML.read_text(encoding="utf-8"))
+    if games.lang != "ar" or games.direction != "rtl":
+        errors.append("Games page must declare lang='ar' and dir='rtl'.")
+    duplicate_game_ids = sorted({item for item in games.ids if games.ids.count(item) > 1})
+    if duplicate_game_ids:
+        errors.append("Duplicate games HTML IDs: " + ", ".join(duplicate_game_ids))
+    game_ids = set(games.ids)
+    for key in ("memory", "color", "number", "letters", "shapes"):
+        if "tab-" + key not in game_ids or "game-" + key not in game_ids:
+            errors.append("Games tab/panel pair is incomplete: " + key)
+    for asset in games.local_assets:
+        if not (ROOT / asset).is_file():
+            errors.append("Games page references a missing local asset: " + asset)
+
+for source_name in ("games.html", "games.js", "games.css"):
+    source = ROOT / source_name
+    deployed = PUBLIC_DIR / source_name
+    if not deployed.is_file():
+        errors.append("Cloudflare games asset missing: public/" + source_name)
+    elif source.is_file() and source.read_bytes() != deployed.read_bytes():
+        errors.append("Cloudflare games asset is out of sync: public/" + source_name)
+
 if errors:
     print("Frontend validation failed:")
     for error in errors:
