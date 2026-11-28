@@ -167,7 +167,6 @@ async function handle(request, env) {
   }
 
   const projectMatch = path.match(/^\/api\/v1\/projects\/([0-9a-f-]{36})$/i);
-  const projectMatch = path.match(/^\\/api\\/v1\\/projects\\/([0-9a-f-]{36})$/i);
   if (projectMatch && method === "PUT") {
     const user = await requireAuth(request, env);
     if (!user) return json({ error: "UNAUTHENTICATED" }, 401);
