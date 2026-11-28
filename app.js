@@ -498,16 +498,19 @@ if (ideaForm && result && projectList && projectCount) {
       type,
       idea,
       updatedAt: new Date().toISOString(),
-      status: "مسودة"
+      status: previous ? previous.status : "مسودة",
+      // Keep the user's edited storyboard when only the project brief changes.
+      storyboard: previous ? previous.storyboard : null
     };
 
-    const withoutCurrent = projects.filter((item) =>
-      item.id !== project.id && item.name !== project.name
-    );
-    projects = [project, ...withoutCurrent].slice(0, MAX_PROJECTS);
+    const previousProjects = projects;
+    projects = [project, ...projects.filter((item) => item.id !== project.id)]
+      .slice(0, MAX_PROJECTS);
 
     if (!persistProjects()) {
-      showFeedback("لم نتمكن من الحفظ على هذا الجهاز. لم نرسل بياناتك لأي خادم.", true);
+      projects = previousProjects;
+      showFeedback("لم نتمكن من الحفظ على هذا الجهاز. لم نرسل بياناتك لأي خادم، ولم نفقد النسخة السابقة.", true);
+      renderProjects();
       return;
     }
 
@@ -541,7 +544,10 @@ if (ideaForm && result && projectList && projectCount) {
 
       try {
         const parsed = JSON.parse(await file.text());
-        const incoming = Array.isArray(parsed) ? parsed : [parsed];
+        // Accept both a plain project export and the production-pack wrapper.
+        const incoming = Array.isArray(parsed)
+          ? parsed
+          : [parsed && parsed.project && typeof parsed.project === "object" ? parsed.project : parsed];
         const valid = incoming.filter(isValidProject).map(normalizeProject);
 
         if (!valid.length) {
