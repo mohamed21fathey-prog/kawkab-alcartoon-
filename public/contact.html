@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="صفحة التواصل مع فريق كوكب الكرتون للاستفسارات والمقترحات والدعم.">
+  <meta name="theme-color" content="#07152f">
+  <title>اتصل بنا | كوكب الكرتون</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-main{min-height:65vh;background:linear-gradient(135deg,#f7faff,#edf5fc);padding:58px 7% 76px}
+    .page-wrap{max-width:980px;margin:auto;background:#fff;border:1px solid #e1eaf4;border-radius:24px;padding:clamp(22px,5vw,52px);box-shadow:0 18px 48px #09264b0d}
+    .page-kicker{color:#1683d8;font-size:12px;font-weight:900}
+    .page-wrap h1{font-size:clamp(30px,5vw,44px);color:#0a2850;margin:8px 0 12px}
+    .page-lead{color:#60728b;line-height:2;font-size:14px;margin:0 0 28px}
+    .page-wrap h2{font-size:19px;color:#104d7d;margin:28px 0 8px}
+    .page-wrap p,.page-wrap li{font-size:13px;line-height:2.1;color:#52627a}
+    .page-wrap ul{padding-right:22px}
+    .page-callout{padding:15px 18px;background:#eef8ff;border-right:4px solid #1598d2;border-radius:12px;margin:20px 0}
+    .page-callout p{margin:0}
+    .page-meta{font-size:11px;color:#8a97a9;margin-top:30px}
+    .contact-form{display:grid;gap:12px;margin-top:24px}
+    .contact-form label{font-size:12px;font-weight:800;color:#253c59}
+    .contact-form input,.contact-form textarea{width:100%;border:1px solid #d8e4f0;border-radius:10px;padding:12px;background:#fbfdff;font:inherit;font-size:13px}
+    .contact-form textarea{min-height:130px;resize:vertical}
+    .contact-form button{justify-self:start}
+    .contact-note{font-size:11px!important;color:#8a6b2d!important;background:#fff8e8;padding:12px 14px;border-radius:10px}
+    @media(max-width:760px){.page-main{padding:30px 5% 48px}.page-wrap{border-radius:17px}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="كوكب الكرتون - الرئيسية"><span class="brand-mark" aria-hidden="true">✦</span><span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
+  <button class="menu-toggle" type="button" aria-label="فتح القائمة" aria-expanded="false" aria-controls="nav">☰</button>
+  <nav id="nav" aria-label="القائمة الرئيسية">
+    <a href="index.html#services">أقسام الكوكب</a><a href="index.html#studio">الاستوديو</a><a href="index.html#market">المتجر</a><a href="about.html">من نحن</a><a class="nav-cta" href="index.html#studio">ابدأ من هنا <span>↙</span></a>
+  </nav>
+</header>
+<main class="page-main"><article class="page-wrap">
+<span class="page-kicker">يسعدنا سماعك</span>
+<h1>اتصل بنا</h1>
+<p class="page-lead">هل لديك سؤال أو اقتراح أو فكرة تعاون؟ نرحب برسالتك وملاحظاتك التي تساعدنا على تطوير كوكب الكرتون.</p>
+<div class="page-callout"><p><strong>قنوات التواصل الرسمية:</strong> سيتم نشر البريد الإلكتروني وروابط صفحات التواصل المعتمدة هنا بعد تجهيزها. لن نعرض رقم هاتف أو عنوانًا غير معتمد.</p></div>
+<h2>ما الذي يمكنك التواصل بشأنه؟</h2>
+<ul><li>الاستفسارات العامة عن كوكب الكرتون وأقسامه.</li><li>اقتراحات تطوير الموقع وتجربة الاستخدام.</li><li>أفكار التعاون والمحتوى التعليمي والإبداعي.</li><li>الإبلاغ عن مشكلة تقنية في صفحات الموقع.</li></ul>
+<h2>جهّز رسالتك</h2>
+<p>يمكنك كتابة رسالتك أدناه ونسخها، ثم إرسالها عبر قناة التواصل الرسمية عند الإعلان عنها. هذا النموذج لا يرسل البيانات إلى خادم ولا ينشئ تذكرة دعم.</p>
+<form class="contact-form" id="contact-form">
+  <div><label for="contact-name">الاسم (اختياري)</label><input id="contact-name" name="name" maxlength="80" autocomplete="name" placeholder="اكتب اسمك"></div>
+  <div><label for="contact-topic">موضوع الرسالة</label><input id="contact-topic" name="topic" maxlength="120" required placeholder="مثال: استفسار عن الاستوديو"></div>
+  <div><label for="contact-message">رسالتك</label><textarea id="contact-message" name="message" maxlength="1500" required placeholder="اكتب رسالتك هنا..."></textarea></div>
+  <button class="btn primary" type="submit">نسخ الرسالة <span>←</span></button>
+  <p id="contact-feedback" role="status" aria-live="polite"></p>
+</form>
+<p class="contact-note">تنبيه: زر نسخ الرسالة ينسخ النص إلى جهازك فقط. لا يتم إرسال الرسالة تلقائيًا، لأن خدمة استقبال الرسائل لم تُربط بعد.</p>
+<script>
+document.querySelector("#contact-form").addEventListener("submit",async(event)=>{
+  event.preventDefault();
+  const name=document.querySelector("#contact-name").value.trim();
+  const topic=document.querySelector("#contact-topic").value.trim();
+  const message=document.querySelector("#contact-message").value.trim();
+  const text="رسالة إلى كوكب الكرتون\nالاسم: "+(name||"غير مذكور")+"\nالموضوع: "+topic+"\nالرسالة:\n"+message;
+  const feedback=document.querySelector("#contact-feedback");
+  try{await navigator.clipboard.writeText(text);feedback.textContent="تم نسخ رسالتك. يمكنك إرسالها عبر قناة التواصل الرسمية عند الإعلان عنها.";}
+  catch(error){feedback.textContent="تعذر النسخ تلقائيًا. يمكنك تحديد النص ونسخه يدويًا.";}
+});
+</script>
+<p class="page-meta">كوكب الكرتون — نرحب بتواصلك ومقترحاتك.</p>
+</article></main>
+<footer>
+  <a class="brand footer-brand" href="index.html"><span class="brand-mark">✦</span><span class="brand-name">كوكب <b>الكرتون</b><small>KAWKAB AL CARTOON</small></span></a>
+  <p>© 2026 كوكب الكرتون — عالمك يبدأ بفكرة.</p>
+  <div><a href="about.html">من نحن</a><a href="privacy.html">سياسة الخصوصية</a><a href="contact.html">اتصل بنا</a></div>
+</footer>
+<script>
+"use strict";
+const menuButton=document.querySelector(".menu-toggle");
+const menu=document.querySelector("#nav");
+if(menuButton&&menu){menuButton.addEventListener("click",()=>{const opened=menu.classList.toggle("open");menuButton.setAttribute("aria-expanded",String(opened));menuButton.setAttribute("aria-label",opened?"إغلاق القائمة":"فتح القائمة");});menu.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{menu.classList.remove("open");menuButton.setAttribute("aria-expanded","false");}));}
+</script>
+</body>
+</html>
