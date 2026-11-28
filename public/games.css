@@ -3,3 +3,8 @@
 .game-tab:focus-visible,.game-restart:focus-visible,.number-options button:focus-visible,.color-choice:focus-visible,.memory-card:focus-visible{outline:3px solid #f1b84a;outline-offset:3px;}
 .game-panel[role="tabpanel"]:focus{outline:none;}
 @media(prefers-reduced-motion:reduce){.game-shell *{scroll-behavior:auto!important;transition:none!important;animation:none!important;}}
+
+.game-audio-tools{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin:22px auto 8px}
+.game-audio-tools button{border:1px solid #b9d8ef;border-radius:12px;background:#fff;color:#135783;padding:10px 15px;font:800 12px Cairo;cursor:pointer}
+.game-audio-tools button:focus-visible{outline:3px solid #f1b84a;outline-offset:3px}
+.game-audio-tools span{width:100%;text-align:center;color:#c4d6eb;font-size:11px}
