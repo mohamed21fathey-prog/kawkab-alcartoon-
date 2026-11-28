@@ -94,4 +94,15 @@ if errors:
         print(f"- {error}")
     sys.exit(1)
 
-print(f"Frontend smoke checks passed: {len(PAGES)} pages, {len(MIRRORS)} mirrored file pairs.")
+app_source = (ROOT / "app.js").read_text(encoding="utf-8")
+for required in ("createEgyptianDialogue", "speakEgyptian", "dialogueInput", "playAllDialogueButton", "createStoryboard({ name, type, idea })"):
+    if required not in app_source:
+        errors.append(f"Studio is missing expected dialogue workflow: {required}")
+
+if errors:
+    print("Frontend smoke checks failed:")
+    for error in errors:
+        print(f"- {error}")
+    sys.exit(1)
+
+print(f"Frontend smoke checks passed: {len(PAGES)} pages, {len(MIRRORS)} mirrored file pairs, Egyptian dialogue workflow.")
