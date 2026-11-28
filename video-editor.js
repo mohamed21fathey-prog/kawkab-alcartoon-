@@ -13,10 +13,13 @@ const progressBar = document.querySelector("#progress-bar");
 const progressLabel = document.querySelector("#progress-label");
 const mergedPreview = document.querySelector("#merged-preview");
 const downloadLink = document.querySelector("#download-merged");
+const voiceInput = document.querySelector("#voiceover-file");
+const voiceStatus = document.querySelector("#voiceover-status");
 
 const MAX_FILES = 5;
 const MAX_TOTAL_BYTES = 60 * 1024 * 1024;
 const MAX_FILE_BYTES = 40 * 1024 * 1024;
+const MAX_VOICE_BYTES = 20 * 1024 * 1024;
 const clips = [];
 let ffmpeg = null;
 let engineReady = false;
@@ -24,6 +27,7 @@ let busy = false;
 let mergedUrl = null;
 let selectedId = null;
 let lastProgressUpdate = 0;
+let voiceFile = null;
 
 function setStatus(message, isError = false) {
   status.textContent = message;
@@ -131,6 +135,36 @@ function getDuration(file) {
     video.src = url;
   });
 }
+if (voiceInput && voiceStatus) {
+  voiceInput.addEventListener("change", () => {
+    const selected = voiceInput.files && voiceInput.files[0];
+    if (!selected) {
+      voiceFile = null;
+      voiceStatus.textContent = "لم يتم اختيار تعليق صوتي.";
+      return;
+    }
+    const extension = selected.name.split(".").pop().toLowerCase();
+    const supported = ["mp3", "wav", "m4a", "aac", "ogg", "opus", "webm", "flac"];
+    if (selected.size > MAX_VOICE_BYTES) {
+      voiceInput.value = "";
+      voiceFile = null;
+      voiceStatus.textContent = "حجم الملف الصوتي أكبر من 20 ميجابايت.";
+      setStatus("اختر ملفًا صوتيًا أصغر من 20 ميجابايت.", true);
+      return;
+    }
+    if (!supported.includes(extension)) {
+      voiceInput.value = "";
+      voiceFile = null;
+      voiceStatus.textContent = "صيغة الصوت غير مدعومة. استخدم MP3 أو WAV أو M4A أو OGG.";
+      setStatus("صيغة التعليق الصوتي غير مدعومة.", true);
+      return;
+    }
+    voiceFile = selected;
+    voiceStatus.textContent = "تم اختيار: " + selected.name + " (" + formatBytes(selected.size) + "). سيُمزج مع صوت الفيديو.";
+    setStatus("تم تجهيز ملف التعليق الصوتي للدمج المحلي.");
+  });
+}
+
 input.addEventListener("change", async () => {
   if (busy) return;
   const incoming = Array.from(input.files || []);
@@ -247,6 +281,7 @@ async function mergeClips() {
   progressBar.style.width = "0%";
   setStatus("جارٍ تجهيز المقاطع. اترك الصفحة مفتوحة حتى ينتهي التصدير.");
   const inputNames = [];
+  const temporaryFiles = [];
   try {
     const silenceInputs = [];
     const audioIndexes = [];
@@ -255,6 +290,7 @@ async function mergeClips() {
       const extension = safeExtension(clip.file);
       const filename = "input_" + index + "." + extension;
       inputNames.push(filename);
+      temporaryFiles.push(filename);
       const bytes = new Uint8Array(await clip.file.arrayBuffer());
       await ffmpeg.writeFile(filename, bytes);
       progressLabel.textContent = "تجهيز المقطع " + (index + 1) + " من " + clips.length;
@@ -262,12 +298,23 @@ async function mergeClips() {
       audioIndexes.push(hasAudio ? index : null);
       if (!hasAudio) silenceInputs.push({ clipIndex: index, duration: clip.duration });
     }
+
+    let voiceFilename = null;
+    if (voiceFile) {
+      voiceFilename = "kawkab-voiceover." + voiceFile.name.split(".").pop().toLowerCase();
+      await ffmpeg.writeFile(voiceFilename, new Uint8Array(await voiceFile.arrayBuffer()));
+      temporaryFiles.push(voiceFilename);
+    }
+
     const args = [];
     inputNames.forEach((name) => args.push("-i", name));
-    silenceInputs.forEach((entry) => {
-      entry.inputIndex = inputNames.length + silenceInputs.indexOf(entry);
+    silenceInputs.forEach((entry, index) => {
+      entry.inputIndex = inputNames.length + index;
       args.push("-f", "lavfi", "-t", String(entry.duration), "-i", "anullsrc=channel_layout=stereo:sample_rate=48000");
     });
+    const voiceInputIndex = voiceFile ? inputNames.length + silenceInputs.length : null;
+    if (voiceFile) args.push("-i", voiceFilename);
+
     const silenceByClip = new Map(silenceInputs.map((entry) => [entry.clipIndex, entry.inputIndex]));
     const graph = [];
     clips.forEach((clip, index) => {
@@ -277,10 +324,22 @@ async function mergeClips() {
     });
     const concatInputs = clips.map((_, index) => "[v" + index + "][a" + index + "]").join("");
     graph.push(concatInputs + "concat=n=" + clips.length + ":v=1:a=1[outv][outa]");
-    args.push("-filter_complex", graph.join(";"), "-map", "[outv]", "-map", "[outa]", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "25", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "kawkab-merged.mp4");
-    progressLabel.textContent = "جارٍ دمج المقاطع وتصدير MP4...";
+
+    let audioOutput = "outa";
+    if (voiceFile) {
+      const totalDuration = clips.reduce((sum, clip) => sum + clip.duration, 0);
+      graph.push("[outa]volume=0.45[baseaudio]");
+      graph.push("[" + voiceInputIndex + ":a:0]aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,apad,atrim=duration=" + totalDuration.toFixed(3) + ",asetpts=PTS-STARTPTS[voiceaudio]");
+      graph.push("[baseaudio][voiceaudio]amix=inputs=2:duration=first:dropout_transition=2:normalize=0[mixedaudio]");
+      audioOutput = "mixedaudio";
+    }
+
+    args.push("-filter_complex", graph.join(";"), "-map", "[outv]", "-map", "[" + audioOutput + "]", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "25", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "kawkab-merged.mp4");
+    progressLabel.textContent = voiceFile
+      ? "جارٍ دمج الفيديو والتعليق الصوتي وتصدير MP4..."
+      : "جارٍ دمج المقاطع وتصدير MP4...";
     const exitCode = await ffmpeg.exec(args);
-    if (exitCode !== 0) throw new Error("لم يكتمل الدمج. قد يكون أحد المقاطع بترميز غير مدعوم.");
+    if (exitCode !== 0) throw new Error("لم يكتمل الدمج. قد يكون أحد المقاطع أو الملف الصوتي بترميز غير مدعوم.");
     const output = await ffmpeg.readFile("kawkab-merged.mp4");
     const blob = new Blob([output.buffer], { type: "video/mp4" });
     if (mergedUrl) URL.revokeObjectURL(mergedUrl);
@@ -292,12 +351,14 @@ async function mergeClips() {
     downloadLink.hidden = false;
     progressBar.style.width = "100%";
     progressLabel.textContent = "اكتمل التصدير.";
-    setStatus("تم دمج " + clips.length + " مقاطع بنجاح. يمكنك معاينة الفيديو وتنزيله.");
+    setStatus(voiceFile
+      ? "تم دمج " + clips.length + " مقاطع مع التعليق الصوتي. يمكنك معاينة الفيديو وتنزيله."
+      : "تم دمج " + clips.length + " مقاطع بنجاح. يمكنك معاينة الفيديو وتنزيله.");
   } catch (error) {
     setStatus("تعذر إكمال الدمج: " + (error.message || "خطأ غير معروف") + " — جرّب مقاطع أقصر أو أصغر حجمًا.", true);
     progressLabel.textContent = "لم يكتمل التصدير.";
   } finally {
-    for (const name of inputNames) {
+    for (const name of temporaryFiles) {
       try { await ffmpeg.deleteFile(name); } catch (_) {}
     }
     try { await ffmpeg.deleteFile("kawkab-merged.mp4"); } catch (_) {}
