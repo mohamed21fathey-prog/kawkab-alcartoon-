@@ -14,7 +14,7 @@ topics = db.execute("SELECT COUNT(*) FROM section_topics").fetchone()[0]
 games = db.execute("SELECT COUNT(*) FROM mini_games").fetchone()[0]
 assert sections == 13, f"expected 13 sections, got {sections}"
 assert topics == 65, f"expected 65 topics, got {topics}"
-assert games == 3, f"expected 3 mini-game entries, got {games}"
+assert games == 5, f"expected 5 mini-game entries, got {games}"
 assert not db.execute("PRAGMA foreign_key_check").fetchall(), "foreign key violations found"
 
 required = {
