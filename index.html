@@ -83,14 +83,15 @@
       <div class="form-head"><span>✦ مساحة مشروع جديد</span><small>نموذج تخطيط تجريبي</small></div>
       <label for="project-type">نوع المشروع</label>
       <select id="project-type" required>
-        <option value="فيلم كرتوني">فيلم كرتوني</option><option value="حلقة مسلسل">حلقة مسلسل</option><option value="فيديو تعليمي">فيديو تعليمي</option><option value="إعلان تسويقي">إعلان تسويقي</option><option value="قصة مصورة">قصة مصورة</option>
+        <option value="فيلم كرتوني">فيلم كرتوني</option><option value="حلقة مسلسل">حلقة مسلسل</option><option value="فيديو تعليمي">فيديو تعليمي</option><option value="إعلان تسويقي">إعلان تسويقي</option><option value="قصة مصورة">قصة مصورة</option><option value="أغنية عربية">أغنية عربية</option>
       </select>
       <label for="project-name">اسم المشروع</label>
       <input id="project-name" type="text" placeholder="مثال: مغامرة في أعماق الفضاء" maxlength="80" required>
       <label for="project-idea">احكِ لنا فكرتك</label>
       <textarea id="project-idea" rows="4" maxlength="600" placeholder="اكتب ملخص الفكرة والشخصيات وما الذي تريد تقديمه..." required></textarea>
+      <button class="btn secondary" id="speak-project-idea" type="button">🗣️ استمع إلى فكرتك بالعربية</button>
       <button class="btn primary submit-btn" type="submit">أنشئ مخطط مشروعي <span>←</span></button>
-      <p class="form-note">احفظ مخططك على هذا الجهاز، أو صدّره كملف JSON. لا يتم رفع بياناتك إلى خادم ولا يتم إنشاء فيديو أو خصم رصيد.</p>
+      <p class="form-note">احفظ مخططك على هذا الجهاز، أو صدّره كملف JSON. لا يتم رفع بياناتك إلى خادم ولا يتم إنشاء فيديو أو ملف صوتي أو خصم رصيد. الصوت هنا معاينة قراءة من المتصفح فقط.</p>
       <div class="idea-result" id="idea-result" aria-live="polite" hidden></div>
       <section class="saved-projects" aria-labelledby="saved-projects-title">
         <div class="saved-projects-head"><h3 id="saved-projects-title">مشاريعي المحفوظة</h3><span id="project-count">0 مشروع</span></div>
